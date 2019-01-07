@@ -28,8 +28,8 @@ const ctx = level1Canvas.getContext('2d');
 // OBJECTS
 
 const ball = {
-	x: 400,
-	y: 735,
+	x: 450,
+	y: 635,
 	color: 'neon',
 	radius: 15,
 	createBall() {
@@ -41,8 +41,8 @@ const ball = {
 }
 
 const paddle = {
-	x: 350,
-	y: 750,
+	x: 400,
+	y: 650,
 	color: 'black',
 	createPaddle() {
 		ctx.fillStyle = "black";
@@ -53,20 +53,31 @@ const paddle = {
 }
 
 const brick = {
-	x: 30,
+	x: 36,
 	y: 20,
 	color: 'yellow',
-	createBricks() {
-		ctx.fillStyle = "yellow";
-		ctx.beginPath();
-		ctx.rect(this.x, this.y, 60, 10);
-		ctx.fill();
+	createOneBrick() {
+		
+	},
+	createRowOfBricks() {
+		for (let i = 50; i < level1Canvas.width; i+=90) {
+			for (let j = 20; j < level1Canvas.height; j+=40) {
+				if (i < 810 && j < 260) {
+					ctx.fillStyle = "yellow";
+					ctx.beginPath();
+					ctx.rect(i, j, 70, 10);
+					ctx.fill();
+				}
+			}
+		}
 	}
+
 }
 
 ball.createBall();
 paddle.createPaddle();
-brick.createBricks();
+// brick.createOneBrick();
+brick.createRowOfBricks();
 
 
 
