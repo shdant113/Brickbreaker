@@ -13,7 +13,17 @@ let amt;
 let w = level1Canvas.width;
 let h = level1Canvas.height;
 
+// CLASS
+
+class Bricks {
+
+}
+
 // OBJECTS
+
+const game = {
+	lives: 3
+}
 
 const ball = { // ball object
 	x: 450,
@@ -27,15 +37,17 @@ const ball = { // ball object
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		ctx.closePath();
 		ctx.fillStyle = this.color;
+		ctx.strokeStyle = 'black'
 		ctx.fill();
+		ctx.stroke();
 	}
 }
 
 const paddle = { // paddle object
-	x: 400,
+	x: 375,
 	y: 650,
 	width: 150,
-	color: 'red',
+	color: 'yellow',
 	createPaddle() { // creating a rectangle with a border
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black';
@@ -64,15 +76,17 @@ const brick = { // brick object
 	x: 36,
 	y: 20,
 	width: 70,
-	color: 'yellow',
+	color: 'orange',
 	createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
 		for (let i = 50; i < w; i+=90) { // 9 across
 			for (let j = 20; j < h; j+=40) { // 6 down
 				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-					ctx.fillStyle = "yellow";
+					ctx.fillStyle = this.color;
+					ctx.strokeStyle = "black";
 					ctx.beginPath();
 					ctx.rect(i, j, 70, 10);
 					ctx.fill();
+					ctx.stroke();
 				}
 			}
 		}
@@ -100,14 +114,23 @@ function animate() { // animation function
 		if (ball.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
 			if (ball.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
 				ball.vy = -ball.vy // reverse direction of ball
+				paddle.velocity(pulse);
 			} else {
-				// game over
+				if (game.lives > 0) {
+					game.lives--
+					$('.lives').text(`${game.lives--}`);
+				} else {
+					$('#level1').hide();
+					$('#game-over').show();
+				}
 			}
 		}
 	}
 	amt = window.requestAnimationFrame(animate);
 } 
 
+$('#level1').hide();
+$('#game-over').hide();
 
 // EVENT LISTENERS
 
@@ -127,14 +150,24 @@ document.getElementById('start-game').addEventListener('click', (e) => {
 	ball.createBall();
 	paddle.createPaddle();
 	brick.createBricks();
-	ctx.save();
 	animate();
-	ctx.restore();
+	$('#start-screen').hide();
+	$('#level1').show();
 });
 
+document.getElementById('play-again').addEventListener('click', (e) => {
+	ball.createBall();
+	paddle.createPaddle();
+	brick.createBricks();
+	animate();
+	$('#level1').show();
+	$('#game-over').hide();
+});
 
-
-
+document.addEventListener('mousemove', (e) => {
+	$('.start').velocity("fadeIn", {duration: 1000, tween: 1000});
+	$('.start').velocity("fadeOut", {delay: 500, duration: 1000, opacity: 20, tween: 1000});
+});
 
 
 
