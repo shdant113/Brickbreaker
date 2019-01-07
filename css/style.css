@@ -1,0 +1,16 @@
+body {
+	min-width: 820px;
+}
+
+#start-screen {
+	width: 800px;
+	height: 850px;
+}
+
+#scoreboard {
+	height: 50px;
+}
+
+#level1-canvas {
+	background-color: blue;
+}
