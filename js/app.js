@@ -5,16 +5,18 @@
 let level1Canvas = document.getElementById('level1-canvas');
 const ctx = level1Canvas.getContext('2d');
 let amt;
+let w = level1Canvas.width;
+let h = level1Canvas.height;
 
 // CLASSES
 
-class Canvas {
-	constructor() {
+// class Canvas {
+// 	constructor() {
+// 		$('level1Canvas').css('background-color', 'blue');
+// 	}
+// }
 
-	}
-}
-
-
+// let newCanvas = new Canvas;
 
 
 
@@ -36,9 +38,9 @@ class Canvas {
 
 const ball = {
 	x: 450,
-	vx: 50,
+	vx: -10,
 	y: 635,
-	vy: 50,
+	vy: -10,
 	color: 'aqua',
 	radius: 15,
 	createBall() {
@@ -47,29 +49,48 @@ const ball = {
 		ctx.fillStyle = this.color;
 		ctx.fill();
 	},
-	animate() {
-		this.createBall();
-		this.x += this.vx;
-		this.y += this.vy;
-		amt = window.requestAnimationFrame(this.createBall());
-	}
 }
+
+function animate() {
+	ctx.clearRect(0, 0, w, h);
+	ball.createBall();
+	ball.x += ball.vx;
+	ball.y += ball.vy;
+	if (ball.y + ball.vy > h || ball.y + ball.vy < 0) {
+		ball.vy = -ball.vy
+	}
+	if (ball.x + ball.xy > w || ball.x + ball.xy < 0) {
+		ball.xy = -ball.xy
+	}
+	amt = window.requestAnimationFrame(animate);
+}
+
 
 const paddle = {
 	x: 400,
 	y: 650,
-	color: 'black',
+	color: 'red',
 	createPaddle() {
-		ctx.fillStyle = "black";
+		ctx.fillStyle = this.color;
+		ctx.strokeStyle = 'white';
 		ctx.beginPath();
 		ctx.rect(this.x, this.y, 100, 30);
 		ctx.fill();
+		ctx.stroke();
 	},
 	movePaddleLeft() {
-
+		this.createPaddle();
+		this.x-=40;
+		while (this.x < 0) {
+			this.x+=1;
+		}
 	},
 	movePaddleRight() {
-
+		this.createPaddle();
+		this.x+=40;
+		while (this.x > 800) {
+			this.x-=1;
+		}
 	}
 }
 
@@ -78,8 +99,8 @@ const brick = {
 	y: 20,
 	color: 'yellow',
 	createBricks() {
-		for (let i = 50; i < level1Canvas.width; i+=90) {
-			for (let j = 20; j < level1Canvas.height; j+=40) {
+		for (let i = 50; i < w; i+=90) {
+			for (let j = 20; j < h; j+=40) {
 				if (i < 810 && j < 260) {
 					ctx.fillStyle = "yellow";
 					ctx.beginPath();
@@ -89,7 +110,6 @@ const brick = {
 			}
 		}
 	}
-
 }
 
 
@@ -102,18 +122,12 @@ const brick = {
 document.addEventListener('keydown', (e) => {
 	let key = event.key;
 	// MOVE PADDLE LEFT
-	if (key === "ArrowLeft") {
-		// move paddle left
-	}
-	if (key === "a") {
-		// move paddle left
+	if (key === "ArrowLeft" || key === "a") {
+		paddle.movePaddleLeft();
 	}
 	// MOVE PADDLE RIGHT
-	if (key === "ArrowRight") {
-		// move paddle right
-	}
-	if (key === "d") {
-		// move paddle right
+	if (key === "ArrowRight" || key === "d") {
+		paddle.movePaddleRight();
 	}
 });
 
@@ -121,8 +135,8 @@ document.getElementById('start-game').addEventListener('click', (e) => {
 	ball.createBall();
 	paddle.createPaddle();
 	brick.createBricks();
-	ball.animate();
-})
+	animate();
+});
 
 
 
