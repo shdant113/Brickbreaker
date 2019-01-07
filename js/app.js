@@ -1,11 +1,18 @@
-console.log('thing')
+// console.log('thing')
+
+// LEVEL 1 JAVASCRIPT
 
 let level1Canvas = document.getElementById('level1-canvas');
 const ctx = level1Canvas.getContext('2d');
+let amt;
 
 // CLASSES
 
+class Canvas {
+	constructor() {
 
+	}
+}
 
 
 
@@ -29,15 +36,23 @@ const ctx = level1Canvas.getContext('2d');
 
 const ball = {
 	x: 450,
+	vx: 50,
 	y: 635,
-	color: 'neon',
+	vy: 50,
+	color: 'aqua',
 	radius: 15,
 	createBall() {
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI);
-		ctx.fillStyle = "aqua";
+		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+		ctx.fillStyle = this.color;
 		ctx.fill();
 	},
+	animate() {
+		this.createBall();
+		this.x += this.vx;
+		this.y += this.vy;
+		amt = window.requestAnimationFrame(this.createBall());
+	}
 }
 
 const paddle = {
@@ -50,16 +65,19 @@ const paddle = {
 		ctx.rect(this.x, this.y, 100, 30);
 		ctx.fill();
 	},
+	movePaddleLeft() {
+
+	},
+	movePaddleRight() {
+
+	}
 }
 
 const brick = {
 	x: 36,
 	y: 20,
 	color: 'yellow',
-	createOneBrick() {
-		
-	},
-	createRowOfBricks() {
+	createBricks() {
 		for (let i = 50; i < level1Canvas.width; i+=90) {
 			for (let j = 20; j < level1Canvas.height; j+=40) {
 				if (i < 810 && j < 260) {
@@ -74,24 +92,6 @@ const brick = {
 
 }
 
-ball.createBall();
-paddle.createPaddle();
-// brick.createOneBrick();
-brick.createRowOfBricks();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -99,7 +99,30 @@ brick.createRowOfBricks();
 
 // EVENT LISTENERS
 
+document.addEventListener('keydown', (e) => {
+	let key = event.key;
+	// MOVE PADDLE LEFT
+	if (key === "ArrowLeft") {
+		// move paddle left
+	}
+	if (key === "a") {
+		// move paddle left
+	}
+	// MOVE PADDLE RIGHT
+	if (key === "ArrowRight") {
+		// move paddle right
+	}
+	if (key === "d") {
+		// move paddle right
+	}
+});
 
+document.getElementById('start-game').addEventListener('click', (e) => {
+	ball.createBall();
+	paddle.createPaddle();
+	brick.createBricks();
+	ball.animate();
+})
 
 
 
