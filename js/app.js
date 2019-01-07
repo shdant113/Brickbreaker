@@ -2,74 +2,41 @@
 
 // LEVEL 1 SCRIPT
 
+// grab canvas
 let level1Canvas = document.getElementById('level1-canvas');
 const ctx = level1Canvas.getContext('2d');
+
+// empty variable
 let amt;
+
+// lazy programming
 let w = level1Canvas.width;
 let h = level1Canvas.height;
 
-// CLASSES
-
-// class Canvas {
-// 	constructor() {
-// 		$('level1Canvas').css('background-color', 'blue');
-// 	}
-// }
-
-// let newCanvas = new Canvas;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // OBJECTS
 
-const ball = {
+const ball = { // ball object
 	x: 450,
 	vx: -10,
 	y: 635,
 	vy: -10,
 	color: 'aqua',
 	radius: 15,
-	createBall() {
+	createBall() { // creating a circle
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		ctx.closePath();
 		ctx.fillStyle = this.color;
 		ctx.fill();
-	},
-	// animate() {
-	// 	ctx.clearRect(0, 0, w, h);
-	// 	this.createBall();
-	// 	this.x += this.vx;
-	// 	this.y += this.vy;
-	// 	if (this.x + this.vx > w || this.x + this.vx < 0) {
-	// 		this.vx = -this.vx
-	// 	}
-	// 	if (this.y + this.vy > h || this.y + this.vy < 0) {
-	// 		this.vy = -this.vy
-	// 	}
-	// 	amt = window.requestAnimationFrame(this.animate);
-	// }
+	}
 }
 
-const paddle = {
+const paddle = { // paddle object
 	x: 400,
 	y: 650,
+	width: 150,
 	color: 'red',
-	createPaddle() {
+	createPaddle() { // creating a rectangle with a border
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black';
 		ctx.beginPath();
@@ -77,30 +44,31 @@ const paddle = {
 		ctx.fill();
 		ctx.stroke();
 	},
-	movePaddleLeft() {
+	movePaddleLeft() { // method for moving paddle to the left
 		this.createPaddle();
 		this.x-=80;
-		while (this.x < 1) {
+		while (this.x < 1) { // if paddle hits left border, it stops going left
 			this.x+=1;
 		}
 	},
-	movePaddleRight() {
+	movePaddleRight() { // method for moving paddle to the right
 		this.createPaddle();
 		this.x+=80;
-		while (this.x > 749) {
+		while (this.x > 749) { // width of canvas is 900, but width of paddle is 150, so hardcoded paddle boundary to 900 - 150
 			this.x-=1;
 		}
 	}
 }
 
-const brick = {
+const brick = { // brick object
 	x: 36,
 	y: 20,
+	width: 70,
 	color: 'yellow',
-	createBricks() {
-		for (let i = 50; i < w; i+=90) {
-			for (let j = 20; j < h; j+=40) {
-				if (i < 810 && j < 260) {
+	createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
+		for (let i = 50; i < w; i+=90) { // 9 across
+			for (let j = 20; j < h; j+=40) { // 6 down
+				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
 					ctx.fillStyle = "yellow";
 					ctx.beginPath();
 					ctx.rect(i, j, 70, 10);
@@ -111,21 +79,31 @@ const brick = {
 	}
 }
 
-function animate() {
-	// ctx.clearRect(0, 0, w, h);
-	ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+function animate() { // animation function
+	// ctx.clearRect(0, 0, w, h); // clear
+	ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
   	ctx.beginPath();
   	ctx.rect(0, 0, w, h);
   	ctx.fill();
 	ball.createBall();
 	paddle.createPaddle();
-	ball.x += ball.vx;
-	ball.y += ball.vy;
-	if (ball.y + ball.vy > h || ball.y + ball.vy < 0) {
+	ball.x += ball.vx; // movement of ball horizontally
+	ball.y += ball.vy; // movement of ball vertically
+	if (ball.y + ball.vy > h || ball.y + ball.vy < 0) { // vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
 		ball.vy = -ball.vy
 	}
-	if (ball.x + ball.vx > w || ball.x + ball.vx < 0) {
+	if (ball.x + ball.vx > w || ball.x + ball.vx < 0) { // horizontal boundary " " " 
 		ball.vx = -ball.vx
+	}
+	// logic for contact between ball and paddle
+	if (ball.y + ball.vy > 650) { // paddle y = 650
+		if (ball.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
+			if (ball.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
+				ball.vy = -ball.vy // reverse direction of ball
+			} else {
+				// game over
+			}
+		}
 	}
 	amt = window.requestAnimationFrame(animate);
 } 
@@ -134,7 +112,7 @@ function animate() {
 // EVENT LISTENERS
 
 document.addEventListener('keydown', (e) => {
-	let key = event.key;
+	let key = event.key; // determining which key was pressed
 	// MOVE PADDLE LEFT
 	if (key === "ArrowLeft" || key === "a") {
 		paddle.movePaddleLeft();
