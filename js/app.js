@@ -16,13 +16,43 @@ let h = level1Canvas.height;
 // CLASS
 
 class Bricks {
-
+	constructor(level) {
+		this.level = level;
+		if (this.level === 1) {
+			this.drawLevel1();
+		}
+	};
+	drawLevel1() {
+		for (let i = 50; i < w; i+=90) { // 9 across
+			for (let j = 20; j < h; j+=40) { // 6 down
+				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
+					ctx.fillStyle = 'orange';
+					ctx.strokeStyle = "black";
+					ctx.beginPath();
+					ctx.rect(i, j, 70, 10);
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+		}
+	}
 }
+
+let level1 = new Bricks(1);
 
 // OBJECTS
 
 const game = {
-	lives: 3
+	lives: 3,
+	level: 1,
+	gameOver() {
+		$('#level1').hide();
+		$('#game-over').show();
+	},
+	loseALife() {
+		--this.lives
+		$('.lives').text(`${this.lives}`);
+	}
 }
 
 const ball = { // ball object
@@ -32,10 +62,10 @@ const ball = { // ball object
 	vy: -10,
 	color: 'aqua',
 	radius: 15,
-	createBall() { // creating a circle
+	drawBall() { // creating a circle
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-		ctx.closePath();
+		// ctx.closePath();
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black'
 		ctx.fill();
@@ -48,7 +78,7 @@ const paddle = { // paddle object
 	y: 650,
 	width: 150,
 	color: 'yellow',
-	createPaddle() { // creating a rectangle with a border
+	drawPaddle() { // creating a rectangle with a border
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black';
 		ctx.beginPath();
@@ -57,14 +87,14 @@ const paddle = { // paddle object
 		ctx.stroke();
 	},
 	movePaddleLeft() { // method for moving paddle to the left
-		this.createPaddle();
+		this.drawPaddle();
 		this.x-=80;
 		while (this.x < 1) { // if paddle hits left border, it stops going left
 			this.x+=1;
 		}
 	},
 	movePaddleRight() { // method for moving paddle to the right
-		this.createPaddle();
+		this.drawPaddle();
 		this.x+=80;
 		while (this.x > 749) { // width of canvas is 900, but width of paddle is 150, so hardcoded paddle boundary to 900 - 150
 			this.x-=1;
@@ -72,38 +102,61 @@ const paddle = { // paddle object
 	}
 }
 
-const brick = { // brick object
-	x: 36,
-	y: 20,
-	width: 70,
-	color: 'orange',
-	createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
-		for (let i = 50; i < w; i+=90) { // 9 across
-			for (let j = 20; j < h; j+=40) { // 6 down
-				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-					ctx.fillStyle = this.color;
-					ctx.strokeStyle = "black";
-					ctx.beginPath();
-					ctx.rect(i, j, 70, 10);
-					ctx.fill();
-					ctx.stroke();
-				}
-			}
-		}
-	}
-}
+// const brick = { // brick object
+// 	x: 36,
+// 	y: 20,
+// 	width: 70,
+// 	color: 'orange',
+// 	createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
+// 		// for (let i = 50; i < w; i+=90) { // 9 across
+// 		// 	for (let j = 20; j < h; j+=40) { // 6 down
+// 		// 		if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
+// 		// 			ctx.fillStyle = this.color;
+// 		// 			ctx.strokeStyle = "black";
+// 		// 			ctx.beginPath();
+// 		// 			ctx.rect(i, j, 70, 10);
+// 		// 			ctx.fill();
+// 		// 			ctx.stroke();
+// 		// 		}
+// 		// 	}
+// 		// }
+// 	}
+// }
 
-function animate() { // animation function
-	// ctx.clearRect(0, 0, w, h); // clear
+// FUNCTIONS
+
+function trailingEffect() {
 	ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
   	ctx.beginPath();
   	ctx.rect(0, 0, w, h);
   	ctx.fill();
-	ball.createBall();
-	paddle.createPaddle();
+}
+
+function background() {
+	ctx.strokeStyle = 'navy';
+	ctx.lineWidth = 5;
+	for (let i = -30; i < w; i+=140) {
+		ctx.beginPath();
+		ctx.moveTo(i, 0);
+		ctx.lineTo(i, h);
+		ctx.stroke();
+	}
+	for (let i = 0; i < h; i+=40) {
+		ctx.beginPath();
+		ctx.moveTo(0, i);
+		ctx.lineTo(w, i);
+		ctx.stroke();
+	}
+}
+
+function animate() { // animation function
+	trailingEffect();
+	background();
+	ball.drawBall();
+	paddle.drawPaddle();
 	ball.x += ball.vx; // movement of ball horizontally
 	ball.y += ball.vy; // movement of ball vertically
-	if (ball.y + ball.vy > h || ball.y + ball.vy < 0) { // vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
+	if (ball.y + ball.vy < 0) { // vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
 		ball.vy = -ball.vy
 	}
 	if (ball.x + ball.vx > w || ball.x + ball.vx < 0) { // horizontal boundary " " " 
@@ -114,16 +167,16 @@ function animate() { // animation function
 		if (ball.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
 			if (ball.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
 				ball.vy = -ball.vy // reverse direction of ball
-				paddle.velocity(pulse);
-			} else {
-				if (game.lives > 0) {
-					game.lives--
-					$('.lives').text(`${game.lives--}`);
-				} else {
-					$('#level1').hide();
-					$('#game-over').show();
-				}
+				// paddle.velocity(pulse);
 			}
+		}
+	}
+	if (ball.y + ball.vy >= 700) {
+		if (game.lives > 1) { console.log("lives were ", game.lives, " lives")
+			game.loseALife();
+
+		} else {
+			game.gameOver();
 		}
 	}
 	amt = window.requestAnimationFrame(animate);
@@ -147,19 +200,20 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('start-game').addEventListener('click', (e) => {
-	ball.createBall();
-	paddle.createPaddle();
-	brick.createBricks();
+	ball.drawBall();
+	paddle.drawPaddle();
+	// brick.createBricks();
 	animate();
 	$('#start-screen').hide();
 	$('#level1').show();
 });
 
+document.getElementById('end-game').addEventListener('click', (e) => {
+	$('#level1').hide();
+	$('#game-over').show();
+})
+
 document.getElementById('play-again').addEventListener('click', (e) => {
-	ball.createBall();
-	paddle.createPaddle();
-	brick.createBricks();
-	animate();
 	$('#level1').show();
 	$('#game-over').hide();
 });
