@@ -16,44 +16,24 @@ let h = level1Canvas.height;
 // CLASS
 
 class Brick {
-	constructor(level) {
-		// x
-		// y
-		// color
-		// h
-		// w
-		this.level = level;
-		if (this.level === 1) {
-			this.drawLevel1();
-		}
+	constructor(x, y, color, height, width) {
+		this.x = x;
+		this.y = y;
+		this.color = color;
+		this.height = height;
+		this.width = width;
 	}
 	draw() {
-
-	}
-	drawLevel1() {
-		for (let i = 50; i < w; i+=90) { // 9 across
-			for (let j = 20; j < h; j+=40) { // 6 down
-				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-					ctx.fillStyle = 'orange';
-					ctx.strokeStyle = "black";
-					ctx.beginPath();
-					ctx.rect(i, j, 70, 10);
-					ctx.fill();
-					ctx.stroke();
-				}
-			}
-		}
+		game.drawBricks();
 	}
 }
-
-let level1 = new Brick(1);
 
 // OBJECTS
 
 const game = {
 	lives: 3,
 	level: 1,
-	// array of bricks
+	arrayOfBricks: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
@@ -65,20 +45,22 @@ const game = {
 		// $('#lost-a-life').show();
 	},
 	drawBricks() {
-
-	},
-	// paddleMiss() {
-	// 	if (ball.y + ball.vy === 700) {
-	// 		if (game.lives > 1) { 
-	// 			this.loseALife();
-	// 			console.log("lives were ", game.lives, " lives")
-	// 			paddle.drawPaddle();
-	// 			ball.drawBall();
-	// 		} else {
-	// 			this.gameOver();
-	// 		}
-	// 	}
-	// }
+		for (let i = 50; i < w; i+=90) { // 9 across
+			for (let j = 20; j < h; j+=40) { // 6 down
+				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
+					let theBricks = function(){
+						ctx.fillStyle = 'orange';
+						ctx.strokeStyle = "black";
+						ctx.beginPath();
+						ctx.rect(i, j, 70, 10);
+						ctx.fill();
+						ctx.stroke();
+					}
+					this.arrayOfBricks.push(theBricks);
+				}
+			}
+		}
+	}
 }
 
 const ball = { // ball object
@@ -94,6 +76,7 @@ const ball = { // ball object
 		// ctx.closePath();
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black'
+		ctx.lineWidth = 5;
 		ctx.fill();
 		ctx.stroke();
 	},
@@ -109,14 +92,14 @@ const ball = { // ball object
 		if (this.y + this.vy < 0) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
 		this.vy = -this.vy
 		}
-		else if (this.y + this.vy > 800) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
-			if (game.lives > 1) {
+		else if (this.y + this.vy > 700) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
+			if (game.lives > 1) { // losing a life
 				paddle.resetPaddle();
 				this.resetBall();
 				game.loseALife();
 				console.log("lives are ", game.lives, " lives");
 			} else {
-				game.gameOver();
+				game.gameOver(); // game ending
 			}
 		}
 		else if (this.x + this.vx > w || this.x + this.vx < 0) { // horizontal boundary " " " 
@@ -144,6 +127,7 @@ const paddle = { // paddle object
 	drawPaddle() { // creating a rectangle with a border
 		ctx.fillStyle = this.color;
 		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 3;
 		ctx.beginPath();
 		ctx.rect(this.x, this.y, 150, 30);
 		ctx.fill();
@@ -156,14 +140,14 @@ const paddle = { // paddle object
 	movePaddleLeft() { // method for moving paddle to the left
 		this.drawPaddle();
 		this.x-=80;
-		while (this.x < 1) { // if paddle hits left border, it stops going left
+		while (this.x < 11) { // if paddle hits left border, it stops going left
 			this.x+=1;
 		}
 	},
 	movePaddleRight() { // method for moving paddle to the right
 		this.drawPaddle();
 		this.x+=80;
-		while (this.x > 749) { // width of canvas is 900, but width of paddle is 150, so hardcoded paddle boundary to 900 - 150
+		while (this.x > 739) { // width of canvas is 900, but width of paddle is 150 and border is 10px, so hardcoded paddle boundary to 900 - 150
 			this.x-=1;
 		}
 	}
@@ -214,6 +198,10 @@ function background() {
 		ctx.lineTo(w, i);
 		ctx.stroke();
 	}
+	ctx.lineWidth = 20;
+	ctx.beginPath();
+	ctx.rect(0, 0, 900, 700);
+	ctx.stroke();
 }
 
 function animate() { // animation function
@@ -248,7 +236,8 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('start-game').addEventListener('click', (e) => {
 	ball.drawBall();
 	paddle.drawPaddle();
-	// brick.createBricks();
+	let bricks = new Brick();
+	bricks.draw();
 	animate();
 	$('#start-screen').hide();
 	$('#level1').show();
@@ -260,6 +249,7 @@ document.getElementById('end-game').addEventListener('click', (e) => {
 })
 
 document.getElementById('play-again').addEventListener('click', (e) => {
+	// TO FIX, MAKE THE SAME AS START GAME BUTTON	
 	$('#level1').show();
 	$('#game-over').hide();
 });
@@ -267,6 +257,8 @@ document.getElementById('play-again').addEventListener('click', (e) => {
 document.addEventListener('mousemove', (e) => {
 	$('.start').velocity("fadeIn", {duration: 1000});
 	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
+	$('#play-again').velocity("fadeIn", {duration: 1000});
+	$('#play-again').velocity("fadeOut", {delay: 500, duration: 1000});
 });
 
 
