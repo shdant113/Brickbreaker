@@ -15,13 +15,21 @@ let h = level1Canvas.height;
 
 // CLASS
 
-class Bricks {
+class Brick {
 	constructor(level) {
+		// x
+		// y
+		// color
+		// h
+		// w
 		this.level = level;
 		if (this.level === 1) {
 			this.drawLevel1();
 		}
-	};
+	}
+	draw() {
+
+	}
 	drawLevel1() {
 		for (let i = 50; i < w; i+=90) { // 9 across
 			for (let j = 20; j < h; j+=40) { // 6 down
@@ -38,21 +46,39 @@ class Bricks {
 	}
 }
 
-let level1 = new Bricks(1);
+let level1 = new Brick(1);
 
 // OBJECTS
 
 const game = {
 	lives: 3,
 	level: 1,
+	// array of bricks
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
 	},
 	loseALife() {
-		--this.lives
-		$('.lives').text(`${this.lives}`);
-	}
+		--this.lives;
+		$('#lives-text').text("Lives: " + this.lives);
+		// $('#level1').hide();
+		// $('#lost-a-life').show();
+	},
+	drawBricks() {
+
+	},
+	// paddleMiss() {
+	// 	if (ball.y + ball.vy === 700) {
+	// 		if (game.lives > 1) { 
+	// 			this.loseALife();
+	// 			console.log("lives were ", game.lives, " lives")
+	// 			paddle.drawPaddle();
+	// 			ball.drawBall();
+	// 		} else {
+	// 			this.gameOver();
+	// 		}
+	// 	}
+	// }
 }
 
 const ball = { // ball object
@@ -70,6 +96,43 @@ const ball = { // ball object
 		ctx.strokeStyle = 'black'
 		ctx.fill();
 		ctx.stroke();
+	},
+	resetBall() {
+		this.x = 450;
+		this.y = 635;
+	},
+	movementLogic() {
+		this.x += this.vx; // movement of ball horizontally
+		this.y += this.vy; // movement of ball vertically
+	},
+	boundariesLogic() {
+		if (this.y + this.vy < 0) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
+		this.vy = -this.vy
+		}
+		else if (this.y + this.vy > 800) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
+			if (game.lives > 1) {
+				paddle.resetPaddle();
+				this.resetBall();
+				game.loseALife();
+				console.log("lives are ", game.lives, " lives");
+			} else {
+				game.gameOver();
+			}
+		}
+		else if (this.x + this.vx > w || this.x + this.vx < 0) { // horizontal boundary " " " 
+			this.vx = -this.vx
+		}
+	},
+	paddleCollisions() {
+		// logic for contact between ball and paddle
+		if (this.y + this.vy > 650) { // paddle y = 650
+			if (this.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
+				if (this.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
+					this.vy = -this.vy // reverse direction of ball
+					// paddle.velocity(pulse);
+				}
+			}
+		}
 	}
 }
 
@@ -85,6 +148,10 @@ const paddle = { // paddle object
 		ctx.rect(this.x, this.y, 150, 30);
 		ctx.fill();
 		ctx.stroke();
+	},
+	resetPaddle() {
+		this.x = 375;
+		this.y = 650;
 	},
 	movePaddleLeft() { // method for moving paddle to the left
 		this.drawPaddle();
@@ -141,7 +208,7 @@ function background() {
 		ctx.lineTo(i, h);
 		ctx.stroke();
 	}
-	for (let i = 0; i < h; i+=40) {
+	for (let i = -5; i < h; i+=40) {
 		ctx.beginPath();
 		ctx.moveTo(0, i);
 		ctx.lineTo(w, i);
@@ -154,35 +221,14 @@ function animate() { // animation function
 	background();
 	ball.drawBall();
 	paddle.drawPaddle();
-	ball.x += ball.vx; // movement of ball horizontally
-	ball.y += ball.vy; // movement of ball vertically
-	if (ball.y + ball.vy < 0) { // vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
-		ball.vy = -ball.vy
-	}
-	if (ball.x + ball.vx > w || ball.x + ball.vx < 0) { // horizontal boundary " " " 
-		ball.vx = -ball.vx
-	}
-	// logic for contact between ball and paddle
-	if (ball.y + ball.vy > 650) { // paddle y = 650
-		if (ball.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
-			if (ball.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
-				ball.vy = -ball.vy // reverse direction of ball
-				// paddle.velocity(pulse);
-			}
-		}
-	}
-	if (ball.y + ball.vy >= 700) {
-		if (game.lives > 1) { console.log("lives were ", game.lives, " lives")
-			game.loseALife();
-
-		} else {
-			game.gameOver();
-		}
-	}
+	ball.movementLogic();
+	ball.boundariesLogic();
+	ball.paddleCollisions();
 	amt = window.requestAnimationFrame(animate);
-} 
+}
 
 $('#level1').hide();
+// $('#lost-a-life').hide();
 $('#game-over').hide();
 
 // EVENT LISTENERS
@@ -219,8 +265,8 @@ document.getElementById('play-again').addEventListener('click', (e) => {
 });
 
 document.addEventListener('mousemove', (e) => {
-	$('.start').velocity("fadeIn", {duration: 1000, tween: 1000});
-	$('.start').velocity("fadeOut", {delay: 500, duration: 1000, opacity: 20, tween: 1000});
+	$('.start').velocity("fadeIn", {duration: 1000});
+	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
 });
 
 
