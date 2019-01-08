@@ -4,7 +4,7 @@
 
 // grab canvas
 let level1Canvas = document.getElementById('level1-canvas');
-const ctx = level1Canvas.getContext('2d');
+const ctxLevel1 = level1Canvas.getContext('2d');
 
 // empty variable
 let amt;
@@ -48,16 +48,24 @@ const game = {
 		for (let i = 50; i < w; i+=90) { // 9 across
 			for (let j = 20; j < h; j+=40) { // 6 down
 				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-					let theBricks = function(){
-						ctx.fillStyle = 'orange';
-						ctx.strokeStyle = "black";
-						ctx.beginPath();
-						ctx.rect(i, j, 70, 10);
-						ctx.fill();
-						ctx.stroke();
-					}
-					this.arrayOfBricks.push(theBricks);
+					ctxLevel1.fillStyle = 'yellow';
+					ctxLevel1.strokeStyle = 'black';
+					ctxLevel1.lineWidth = 1;
+					ctxLevel1.shadowColor = 'black';
+					ctxLevel1.shadowBlur = 3;
+					ctxLevel1.beginPath();
+					ctxLevel1.rect(i, j, 70, 10);
+					ctxLevel1.fill();
+					ctxLevel1.stroke();
 				}
+				this.arrayOfBricks.push();
+
+				// collision
+					// if ball x value > upper left edge of brick && if ball y value > upper left edge of brick
+						// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
+							// reverse direction of ball
+							// remove brick from displayed array
+					
 			}
 		}
 	}
@@ -71,14 +79,14 @@ const ball = { // ball object
 	color: 'aqua',
 	radius: 15,
 	drawBall() { // creating a circle
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-		// ctx.closePath();
-		ctx.fillStyle = this.color;
-		ctx.strokeStyle = 'black'
-		ctx.lineWidth = 5;
-		ctx.fill();
-		ctx.stroke();
+		ctxLevel1.beginPath();
+		ctxLevel1.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+		ctxLevel1.fillStyle = this.color;
+		ctxLevel1.shadowBlur = 0;
+		ctxLevel1.strokeStyle = 'black'
+		ctxLevel1.lineWidth = 5;
+		ctxLevel1.fill();
+		ctxLevel1.stroke();
 	},
 	resetBall() {
 		this.x = 450;
@@ -125,13 +133,15 @@ const paddle = { // paddle object
 	width: 150,
 	color: 'yellow',
 	drawPaddle() { // creating a rectangle with a border
-		ctx.fillStyle = this.color;
-		ctx.strokeStyle = 'black';
-		ctx.lineWidth = 3;
-		ctx.beginPath();
-		ctx.rect(this.x, this.y, 150, 30);
-		ctx.fill();
-		ctx.stroke();
+		ctxLevel1.fillStyle = this.color;
+		ctxLevel1.strokeStyle = 'black';
+		ctxLevel1.lineWidth = 3;
+		ctxLevel1.shadowColor = 'black';
+		ctxLevel1.shadowBlur = 20;
+		ctxLevel1.beginPath();
+		ctxLevel1.rect(this.x, this.y, 150, 30);
+		ctxLevel1.fill();
+		ctxLevel1.stroke();
 	},
 	resetPaddle() {
 		this.x = 375;
@@ -162,12 +172,12 @@ const paddle = { // paddle object
 // 		// for (let i = 50; i < w; i+=90) { // 9 across
 // 		// 	for (let j = 20; j < h; j+=40) { // 6 down
 // 		// 		if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-// 		// 			ctx.fillStyle = this.color;
-// 		// 			ctx.strokeStyle = "black";
-// 		// 			ctx.beginPath();
-// 		// 			ctx.rect(i, j, 70, 10);
-// 		// 			ctx.fill();
-// 		// 			ctx.stroke();
+// 		// 			ctxLevel1.fillStyle = this.color;
+// 		// 			ctxLevel1.strokeStyle = "black";
+// 		// 			ctxLevel1.beginPath();
+// 		// 			ctxLevel1.rect(i, j, 70, 10);
+// 		// 			ctxLevel1.fill();
+// 		// 			ctxLevel1.stroke();
 // 		// 		}
 // 		// 	}
 // 		// }
@@ -177,31 +187,34 @@ const paddle = { // paddle object
 // FUNCTIONS
 
 function trailingEffect() {
-	ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
-  	ctx.beginPath();
-  	ctx.rect(0, 0, w, h);
-  	ctx.fill();
+	ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
+  	ctxLevel1.beginPath();
+  	ctxLevel1.rect(0, 0, w, h);
+  	ctxLevel1.fill();
 }
 
 function background() {
-	ctx.strokeStyle = 'navy';
-	ctx.lineWidth = 5;
-	for (let i = -30; i < w; i+=140) {
-		ctx.beginPath();
-		ctx.moveTo(i, 0);
-		ctx.lineTo(i, h);
-		ctx.stroke();
+	ctxLevel1.strokeStyle = 'navy';
+	ctxLevel1.lineWidth = 5;
+	ctxLevel1.shadowColor = 'navy';
+	ctxLevel1.shadowBlur = 20;
+	for (let i = -38.5; i < w; i+=140) {
+		ctxLevel1.beginPath();
+		ctxLevel1.moveTo(i, 0);
+		ctxLevel1.lineTo(i, h);
+		ctxLevel1.stroke();
 	}
 	for (let i = -5; i < h; i+=40) {
-		ctx.beginPath();
-		ctx.moveTo(0, i);
-		ctx.lineTo(w, i);
-		ctx.stroke();
+		ctxLevel1.beginPath();
+		ctxLevel1.moveTo(0, i);
+		ctxLevel1.lineTo(w, i);
+		ctxLevel1.stroke();
 	}
-	ctx.lineWidth = 20;
-	ctx.beginPath();
-	ctx.rect(0, 0, 900, 700);
-	ctx.stroke();
+	ctxLevel1.shadowBlur = 0;
+	ctxLevel1.lineWidth = 20;
+	ctxLevel1.beginPath();
+	ctxLevel1.rect(0, 0, 900, 700);
+	ctxLevel1.stroke();
 }
 
 function animate() { // animation function
@@ -243,7 +256,7 @@ document.getElementById('start-game').addEventListener('click', (e) => {
 	$('#level1').show();
 });
 
-document.getElementById('end-game').addEventListener('click', (e) => {
+document.getElementById('end-button').addEventListener('click', (e) => {
 	$('#level1').hide();
 	$('#game-over').show();
 })
@@ -252,6 +265,8 @@ document.getElementById('play-again').addEventListener('click', (e) => {
 	// TO FIX, MAKE THE SAME AS START GAME BUTTON	
 	$('#level1').show();
 	$('#game-over').hide();
+	game.level = 1;
+	game.lives = 3;
 });
 
 document.addEventListener('mousemove', (e) => {

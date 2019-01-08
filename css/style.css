@@ -1,12 +1,23 @@
 body {
+	display: flex;
 	min-width: 940px;
+	margin: 0;
+	padding: 0;
+	background: radial-gradient(ellipse, navy, transparent);
+	background-size: cover;
+	background-repeat: no-repeat;
 }
 
-#start-screen, #scoreboard, #level1-canvas, #game-over {
+html, body {
+	height: 100%;
+}
+
+#start-screen, #level1, #game-over {
 	background-color: black;
-	height: 700px;
+	height: 765px;
 	width: 900px;
 	text-align: center;
+	margin: auto;
 }
 
 h1, h2 {
@@ -28,14 +39,16 @@ h2 {
 
 #scoreboard {
 	display: flex;
+	background-color: navy;
 	height: 50px;
 	text-align: center;
+	border-top: 15px solid navy;
 	justify-content: space-between;
 	color: white;
 	max-width: 900px;
 }
 
-.start, #play-again, #end-game, #pause-button, #lives-text, #level-text {
+.start, #play-again, #end-button, #pause-button, #lives-text, #level-text {
 	text-align: center;
 	font-family: 'Montserrat Alternates', sans-serif;
 	border-radius: 20px;
@@ -50,12 +63,10 @@ h2 {
 	margin: 30px 0;
 }
 
-#end-game {
-	font-size: 20px;
-}
-
-#pause-button, #lives-text, #level-text {
+#pause-button, #lives-text, #level-text, #end-button {
 	font-size: 15px;
+	margin: auto 10px;
+	width: 20%;
 }
 
 #lives-text, #level-text {
