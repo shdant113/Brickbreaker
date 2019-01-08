@@ -38,6 +38,14 @@ const game = {
 		$('#level1').hide();
 		$('#game-over').show();
 	},
+	playAgain() {
+		$('#game-over').hide();
+		$('#level1').show();
+		this.level = 1;
+		this.lives = 3;
+		$('#lives-text').text("Lives: " + this.lives);
+		$('#level-text').text("Level: " + this.level);
+	},
 	loseALife() {
 		--this.lives;
 		$('#lives-text').text("Lives: " + this.lives);
@@ -263,10 +271,9 @@ document.getElementById('end-button').addEventListener('click', (e) => {
 
 document.getElementById('play-again').addEventListener('click', (e) => {
 	// TO FIX, MAKE THE SAME AS START GAME BUTTON	
-	$('#level1').show();
-	$('#game-over').hide();
-	game.level = 1;
-	game.lives = 3;
+	game.playAgain();
+	paddle.resetPaddle();
+	ball.resetBall();
 });
 
 document.addEventListener('mousemove', (e) => {
