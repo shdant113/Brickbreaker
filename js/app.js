@@ -13,6 +13,8 @@ let amt;
 let w = level1Canvas.width;
 let h = level1Canvas.height;
 
+// brick variables
+
 // CLASS
 
 class Brick {
@@ -33,7 +35,9 @@ class Brick {
 const game = {
 	lives: 3,
 	level: 1,
-	arrayOfBricks: [],
+	theBricks: [],
+	xValues: [],
+	yValues: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
@@ -53,31 +57,51 @@ const game = {
 		// $('#lost-a-life').show();
 	},
 	drawBricks() {
-		for (let i = 50; i < w; i+=90) { // 9 across
-			for (let j = 20; j < h; j+=40) { // 6 down
-				if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-					ctxLevel1.fillStyle = 'yellow';
-					ctxLevel1.strokeStyle = 'black';
-					ctxLevel1.lineWidth = 1;
-					ctxLevel1.shadowColor = 'black';
-					ctxLevel1.shadowBlur = 3;
-					ctxLevel1.beginPath();
-					ctxLevel1.rect(i, j, 70, 10);
-					ctxLevel1.fill();
-					ctxLevel1.stroke();
-				}
-				this.arrayOfBricks.push();
-
+		this.pushtoArray();
+		this.pullXFromArray();
+		this.pullYFromArray();
+		ctxLevel1.strokeStyle = 'black';
+		ctxLevel1.fillStyle = level1Bricks.color[level1Bricks.index]; // random color generation from array
+		ctxLevel1.lineWidth = 1;
+		ctxLevel1.shadowColor = 'black';
+		ctxLevel1.shadowBlur = 3;
+		ctxLevel1.beginPath();
+		ctxLevel1.rect(level1Bricks.x, level1Bricks.y, level1Bricks.width, level1Bricks.height);
+		ctxLevel1.fill();
+		ctxLevel1.stroke();
+		// for (let i = 0; i < level1Bricks.rows; i++) {
+		// 	this.theBricks[i].push();
+		// 	for (let j = 0; j < level1Bricks.columns; j++) {
+		// 		this.theBricks[i][j].push();
+		// 	}
+	},
+	pushtoArray() {
+		for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
+			for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
+				level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
+				// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
+				// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
+				level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
+				this.theBricks.push(level1Bricks.x, level1Bricks.y);
+			}
+		}
+	},
+	pullXFromArray() {
+		for (let i = 0; i < this.theBricks.length; i+2) {
+			this.theBricks[i].push(this.xValues);
+		}
+	},
+	pullYFromArray() {
+		for (let i = 1; i < this.theBricks.length; i+2) {
+			this.theBricks[i].push(this.yValues);
+		}
+	}
+}
 				// collision
 					// if ball x value > upper left edge of brick && if ball y value > upper left edge of brick
 						// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
 							// reverse direction of ball
 							// remove brick from displayed array
-					
-			}
-		}
-	}
-}
 
 const ball = { // ball object
 	x: 450,
@@ -171,26 +195,32 @@ const paddle = { // paddle object
 	}
 }
 
-// const brick = { // brick object
-// 	x: 36,
-// 	y: 20,
-// 	width: 70,
-// 	color: 'orange',
-// 	createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
-// 		// for (let i = 50; i < w; i+=90) { // 9 across
-// 		// 	for (let j = 20; j < h; j+=40) { // 6 down
-// 		// 		if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-// 		// 			ctxLevel1.fillStyle = this.color;
-// 		// 			ctxLevel1.strokeStyle = "black";
-// 		// 			ctxLevel1.beginPath();
-// 		// 			ctxLevel1.rect(i, j, 70, 10);
-// 		// 			ctxLevel1.fill();
-// 		// 			ctxLevel1.stroke();
-// 		// 		}
-// 		// 	}
-// 		// }
-// 	}
-// }
+const level1Bricks = { // brick object
+	x: 0,
+	y: 0,
+	columns: 9,
+	rows: 6,
+	height: 10,
+	width: 70,
+	spaceBetween: 20,
+	spaceAbove: 20,
+	index: Math.random(10),
+	color: ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec', '#85cb71', '#903934', '#1730c8', '#995f86']
+	// createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
+		// for (let i = 50; i < w; i+=90) { // 9 across
+		// 	for (let j = 20; j < h; j+=40) { // 6 down
+		// 		if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
+		// 			ctxLevel1.fillStyle = this.color;
+		// 			ctxLevel1.strokeStyle = "black";
+		// 			ctxLevel1.beginPath();
+		// 			ctxLevel1.rect(i, j, 70, 10);
+		// 			ctxLevel1.fill();
+		// 			ctxLevel1.stroke();
+		// 		}
+		// 	}
+		// }
+	// }
+}
 
 // FUNCTIONS
 
@@ -277,10 +307,10 @@ document.getElementById('play-again').addEventListener('click', (e) => {
 });
 
 document.addEventListener('mousemove', (e) => {
-	$('.start').velocity("fadeIn", {duration: 1000});
 	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
-	$('#play-again').velocity("fadeIn", {duration: 1000});
+	$('.start').velocity("fadeIn", {duration: 1000});
 	$('#play-again').velocity("fadeOut", {delay: 500, duration: 1000});
+	$('#play-again').velocity("fadeIn", {duration: 1000});
 });
 
 
