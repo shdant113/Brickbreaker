@@ -3,46 +3,25 @@ body {
 	min-width: 940px;
 	margin: 0;
 	padding: 0;
-	background: radial-gradient(ellipse, navy, transparent);
-	-webkit-animation: gradient 15s ease infinite;
-	-moz-animation: gradient 15s ease infinite;
-	animation: gradient 15s ease infinite;
+	background: linear-gradient(white 0%, aqua 20%, blue 60%, navy 100%);
+	-webkit-animation: Gradient 15s ease infinite;
+	-moz-animation: Gradient 15s ease infinite;
+	animation: Gradient 15s ease infinite;
 }
 
-@-webkit-keyframes gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
+@-webkit-keyframes Gradient {
+    0%{background-position:50% 0%}
+    50%{background-position:51% 100%}
+    100%{background-position:50% 0%}
 }
-
-@-moz-keyframes gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
+@keyframes Gradient { 
+    0%{background-position:50% 0%}
+    50%{background-position:51% 100%}
+    100%{background-position:50% 0%}
 }
-
-@keyframes gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
+canvas {
+	border: 2px solid black;
+	
 }
 
 html, body {

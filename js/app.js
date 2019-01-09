@@ -3,37 +3,41 @@
 // LEVEL 1 SCRIPT
 
 // grab canvas
-let level1Canvas = document.getElementById('level1-canvas');
+const level1Canvas = document.getElementById('level1-canvas');
 const ctxLevel1 = level1Canvas.getContext('2d');
 
 // empty variable
 let amt;
 
 // lazy programming
-let w = level1Canvas.width;
-let h = level1Canvas.height;
+const w = level1Canvas.width;
+const h = level1Canvas.height;
 
-// brick variables
+// color array
+const colors = ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec', '#85cb71', '#903934', '#1730c8', '#995f86'];
+// let index = Math.floor(Math.random(10));
 
 // CLASS
 
 class Brick {
-	constructor(x, y, color, width, height) {
+	constructor(x, y, width, height) {
 		this.x = x;
 		this.y = y;
-		this.color = color;
+		this.color = colors[parseInt(Math.random() * colors.length)];
+		// console.log(this.color)
 		this.width = width;
 		this.height = height;
 	}
-	draw() {
+	draw() { 
 		// canvas -- just draw one brick
+		// console.log('brick.draw()')
+		ctxLevel1.beginPath();
+		ctxLevel1.rect(this.x, this.y, 70, 20);
 		ctxLevel1.strokeStyle = 'black';
 		ctxLevel1.fillStyle = this.color; // random color generation from array
 		ctxLevel1.lineWidth = 1;
 		ctxLevel1.shadowColor = 'black';
 		ctxLevel1.shadowBlur = 3;
-		ctxLevel1.beginPath();
-		ctxLevel1.rect(this.x, this.y, this.width, this.height);
 		ctxLevel1.fill();
 		ctxLevel1.stroke();
 	}
@@ -44,7 +48,6 @@ class Brick {
 const game = {
 	lives: 3,
 	level: 1,
-	bricks: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
@@ -62,43 +65,66 @@ const game = {
 		$('#lives-text').text("Lives: " + this.lives);
 		// $('#level1').hide();
 		// $('#lost-a-life').show();
-	},
-	drawBricks(numOfBricks) {
-		for (let i = 0; i < numOfBricks; i++) {
-			this.drawBoard();
-		}
+	}
+}
+
+const bricks = {
+	x: 60, // initial X on first brick
+	y: 60, // initial Y
+	width: 70,
+	height: 20,
+	bricksArray: [],
+	drawBricks() { 
+		// console.log("drawBricks");
 		// iterater over this.bricks
 		// call brick.draw for each brick
+		this.bricksArray.forEach((brick) => {
+			brick.draw();
+			// console.log('brick.draw')
+		})
 	},
 	removeBricks() {
+		// collision
+			// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick
+				// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
+					// reverse direction of ball
+					// remove brick from displayed array .pop
 
 	},
-	createBrick(x, y, color, width, height) {
-		// loop up to how ever many bricks you want
-		// instantiate push them into this.bricks
-		let brick = new Brick(x, y, color, width, height);
-		console.log(brick);
-		this.bricks.push(brick);
-		brick.draw();
+	createBrick(x, y, width, height) {
+		// loop for up to num of bricks
+		for (let i = 0; i < 54; i++) { // 54 bricks in level 1
+			let brick = new Brick(x, y, width, height);
+			this.bricksArray.push(brick);
+			// console.log(brick);
+		};
+		this.drawBricks();
+		// 	});
+			
+		// });
+			// create new brick
+			// push into brick array this.bricks
 	},
-	drawBoard() {
+	createCoordinates() {
 		const betweenX = 100; // space between Xs
 		const betweenY = 40; // space between Ys
-		let x = 50; // initial X on first brick
-		let y = 0; // initial Y
-		if (this.bricks.length > 0) { // if not first brick
-			x = this.bricks[this.bricks.length - 1].x; // x = value of x of last indexed brick 
-			y = this.bricks[this.bricks.length - 1].y; // y = y value of last indexed brick
-			if (this.bricks[this.bricks.length - 1].x > w - 70) { // if the last x (top left) value is higher than the width of the canvas minus the width of a brick, stop making bricks
-				x = 50;
-				y += betweenY; // go to building next row
-			} else {
-				x += betweenX; // if not going to next row, space between next brick
+		let x = this.x; 
+		let y = this.y;
+			if (this.bricksArray.length > 0) { // if not first brick
+				x = this.bricksArray[this.bricksArray.length - 1].x; // x = value of x of last indexed brick 
+				y = this.bricksArray[this.bricksArray.length - 1].y; // y = y value of last indexed brick
+				if (this.bricksArray[this.bricksArray.length - 1].x > w - 70) { // if the last x (top left) value is higher than the width of the canvas minus the width of a brick, stop making bricks
+					x = 60;
+					y += betweenY; // go to building next row
+				} else {
+					x += betweenX; // if not going to next row, space between next brick
+				}
 			}
-		}
-		console.log(x, y, 'red', 70, 20);
-		this.createBrick(x, y, 'red', 70, 20);
+		this.createBrick(x, y, this.width, this.height);
 	},
+	// initialCreateBrick(){
+	// 	this.createBrick(this.x, this.y, this.width, this.height);
+	// }
 		// for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
 		// 	for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
 		// 		let brick = new Brick(x, y, color, width, height);
@@ -139,15 +165,8 @@ const game = {
 	// 			// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
 	// 			level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
 	// 			this.theBricks.push(level1Bricks.x, level1Bricks.y);
-	// 		}
-	// 	}
-	// }
+	// 
 }
-				// collision
-					// if ball x value > upper left edge of brick && if ball y value > upper left edge of brick
-						// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
-							// reverse direction of ball
-							// remove brick from displayed array
 
 const ball = { // ball object
 	x: 450,
@@ -241,18 +260,17 @@ const paddle = { // paddle object
 	}
 }
 
-const level1Bricks = { // brick object
-	x: 0,
-	y: 0,
-	columns: 9,
-	rows: 6,
-	height: 10,
-	width: 70,
-	spaceBetween: 20,
-	spaceAbove: 20,
-	index: Math.random(10),
-	color: ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec', '#85cb71', '#903934', '#1730c8', '#995f86']
-}
+// const level1Bricks = { // brick object
+	// x: 0,
+	// y: 0,
+	// columns: 9,
+	// rows: 6,
+	// height: 10,
+	// width: 70,
+	// spaceBetween: 20,
+	// spaceAbove: 20,
+	
+// }
 	// createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
 		// for (let i = 50; i < w; i+=90) { // 9 across
 		// 	for (let j = 20; j < h; j+=40) { // 6 down
@@ -300,10 +318,15 @@ function background() {
 	ctxLevel1.rect(0, 0, 900, 700);
 	ctxLevel1.stroke();
 }
-
+// let x = 0;
 function animate() { // animation function
+	// x++;
+	// if(x==20) {
+	// 	return
+	// }
 	trailingEffect();
 	background();
+	bricks.drawBricks();
 	ball.drawBall();
 	paddle.drawPaddle();
 	ball.movementLogic();
@@ -318,7 +341,7 @@ $('#game-over').hide();
 
 // EVENT LISTENERS
 
-document.addEventListener('keydown', (e) => {
+$(document).on('keydown', (e) => {
 	let key = event.key; // determining which key was pressed
 	// MOVE PADDLE LEFT
 	if (key === "ArrowLeft" || key === "a") {
@@ -330,32 +353,34 @@ document.addEventListener('keydown', (e) => {
 	}
 });
 
-document.getElementById('start-game').addEventListener('click', (e) => {
+$('#start-game').on('click', (e) => {
 	ball.drawBall();
 	paddle.drawPaddle();
-	game.drawBricks(54);
+	bricks.createCoordinates();
+	// game.createBrick();
+	console.log(bricks.bricksArray);
+	// game.drawBricks(54);
 	// let bricks = new Brick();
 	// bricks.draw();
-	// game.createBricks()
 	// game.drawBricks()
 	animate();
 	$('#start-screen').hide();
 	$('#level1').show();
 });
 
-document.getElementById('end-button').addEventListener('click', (e) => {
+$('#end-button').on('click', (e) => {
 	$('#level1').hide();
 	$('#game-over').show();
 })
 
-document.getElementById('play-again').addEventListener('click', (e) => {
+$('#play-again').on('click', (e) => {
 	// TO FIX, MAKE THE SAME AS START GAME BUTTON	
 	game.playAgain();
 	paddle.resetPaddle();
 	ball.resetBall();
 });
 
-document.addEventListener('mousemove', (e) => {
+$(document).on('mousemove', (e) => {
 	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
 	$('.start').velocity("fadeIn", {duration: 1000});
 	$('#play-again').velocity("fadeOut", {delay: 500, duration: 1000});
