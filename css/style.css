@@ -19,10 +19,6 @@ body {
     50%{background-position:51% 100%}
     100%{background-position:50% 0%}
 }
-canvas {
-	border: 2px solid black;
-	
-}
 
 html, body {
 	height: 100%;

@@ -72,23 +72,32 @@ const game = {
 		})
 	},
 	removeBricks() {
-		// collision
-			// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick
-				// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
-					// reverse direction of ball
-					// remove brick from displayed array .pop
+	// collision
+	// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick {
+		for (let i = 0; i < this.bricksArray.length; i++) {
+			if (ball.x > this.bricksArray[i].x && ball.x < (this.bricksArray[i].x + this.bricksArray[i].width) && ball.y > this.bricksArray[i].y && ball.y < (this.bricksArray[i].y + this.bricksArray[i].height)) {
+				ball.vx = -ball.vx;
+				ball.vy = -ball.vy;
+				console.log('brick collision');
+			};
+		}
 	},
+	// 			// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
+	// 				// reverse direction of ball
+	// 				// remove brick from displayed array .pop
+	// },
 	createBricks(x, y) {
 		// loop for up to num of bricks
 		for (let i = 0; i < this.rows; i++) {
 			for (let j = 0; j < this.columns; j++) {
-				let x = i * (70 + 60) + 50; // x  = index * (width + space)
+				let x = i * (70 + 70) + 50; // x  = index * (width + space)
 				let y = j * (40 + 10) + 30; // y  = index * (height + space)
 				let brick = new Brick(x, y);
 				this.bricksArray.push(brick);
 			}
 		}
 		this.drawBricks();
+		// console.log(this.bricksArray)
 	},
 	trailingEffect() {
 		ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
@@ -162,6 +171,7 @@ const ball = { // ball object
 		else if (this.x + this.vx > w || this.x + this.vx < 0) { // horizontal boundary " " " 
 			this.vx = -this.vx
 		}
+		game.removeBricks();
 	},
 	paddleCollisions() {
 		// logic for contact between ball and paddle
@@ -173,6 +183,14 @@ const ball = { // ball object
 			}
 		}
 	}
+	// brickCollisions() {
+	// 	for (let i = 0; i < game.brickArray.length; i++) {
+	// 		if ((ball.x > game.brickArray[i].x) {
+
+	// 		}
+	// 	}
+	// 	-this.vy;
+	// }
 }
 
 const paddle = { // paddle object
@@ -222,7 +240,7 @@ function animate() { // animation function
 	ball.movementLogic();
 	ball.boundariesLogic();
 	ball.paddleCollisions();
-	console.log('animaation running');
+	// console.log('animaation running');
 	amt = window.requestAnimationFrame(animate);
 }
 
