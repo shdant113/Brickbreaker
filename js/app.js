@@ -18,15 +18,24 @@ let h = level1Canvas.height;
 // CLASS
 
 class Brick {
-	constructor(x, y, color, height, width) {
+	constructor(x, y, color, width, height) {
 		this.x = x;
 		this.y = y;
 		this.color = color;
-		this.height = height;
 		this.width = width;
+		this.height = height;
 	}
 	draw() {
-		game.drawBricks();
+		// canvas -- just draw one brick
+		ctxLevel1.strokeStyle = 'black';
+		ctxLevel1.fillStyle = this.color; // random color generation from array
+		ctxLevel1.lineWidth = 1;
+		ctxLevel1.shadowColor = 'black';
+		ctxLevel1.shadowBlur = 3;
+		ctxLevel1.beginPath();
+		ctxLevel1.rect(this.x, this.y, this.width, this.height);
+		ctxLevel1.fill();
+		ctxLevel1.stroke();
 	}
 }
 
@@ -35,9 +44,7 @@ class Brick {
 const game = {
 	lives: 3,
 	level: 1,
-	theBricks: [],
-	xValues: [],
-	yValues: [],
+	bricks: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
@@ -56,7 +63,54 @@ const game = {
 		// $('#level1').hide();
 		// $('#lost-a-life').show();
 	},
-	drawBricks() {
+	drawBricks(numOfBricks) {
+		for (let i = 0; i < numOfBricks; i++) {
+			this.drawBoard();
+		}
+		// iterater over this.bricks
+		// call brick.draw for each brick
+	},
+	removeBricks() {
+
+	},
+	createBrick(x, y, color, width, height) {
+		// loop up to how ever many bricks you want
+		// instantiate push them into this.bricks
+		let brick = new Brick(x, y, color, width, height);
+		console.log(brick);
+		this.bricks.push(brick);
+		brick.draw();
+	},
+	drawBoard() {
+		const betweenX = 100; // space between Xs
+		const betweenY = 40; // space between Ys
+		let x = 50; // initial X on first brick
+		let y = 0; // initial Y
+		if (this.bricks.length > 0) { // if not first brick
+			x = this.bricks[this.bricks.length - 1].x; // x = value of x of last indexed brick 
+			y = this.bricks[this.bricks.length - 1].y; // y = y value of last indexed brick
+			if (this.bricks[this.bricks.length - 1].x > w - 70) { // if the last x (top left) value is higher than the width of the canvas minus the width of a brick, stop making bricks
+				x = 50;
+				y += betweenY; // go to building next row
+			} else {
+				x += betweenX; // if not going to next row, space between next brick
+			}
+		}
+		console.log(x, y, 'red', 70, 20);
+		this.createBrick(x, y, 'red', 70, 20);
+	},
+		// for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
+		// 	for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
+		// 		let brick = new Brick(x, y, color, width, height);
+		// 		level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
+		// 		// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
+		// 		// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
+		// 		level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
+		// 		this.theBricks.push(brick);
+		// 	}
+		// }
+	// drawBricks() {
+		/*
 		this.pushtoArray();
 		this.pullXFromArray();
 		this.pullYFromArray();
@@ -69,33 +123,25 @@ const game = {
 		ctxLevel1.rect(level1Bricks.x, level1Bricks.y, level1Bricks.width, level1Bricks.height);
 		ctxLevel1.fill();
 		ctxLevel1.stroke();
+		*/
+
 		// for (let i = 0; i < level1Bricks.rows; i++) {
 		// 	this.theBricks[i].push();
 		// 	for (let j = 0; j < level1Bricks.columns; j++) {
 		// 		this.theBricks[i][j].push();
 		// 	}
-	},
-	pushtoArray() {
-		for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
-			for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
-				level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
-				// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
-				// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
-				level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
-				this.theBricks.push(level1Bricks.x, level1Bricks.y);
-			}
-		}
-	},
-	pullXFromArray() {
-		for (let i = 0; i < this.theBricks.length; i+2) {
-			this.theBricks[i].push(this.xValues);
-		}
-	},
-	pullYFromArray() {
-		for (let i = 1; i < this.theBricks.length; i+2) {
-			this.theBricks[i].push(this.yValues);
-		}
-	}
+	// },
+	// pushtoArray() {
+	// 	for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
+	// 		for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
+	// 			level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
+	// 			// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
+	// 			// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
+	// 			level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
+	// 			this.theBricks.push(level1Bricks.x, level1Bricks.y);
+	// 		}
+	// 	}
+	// }
 }
 				// collision
 					// if ball x value > upper left edge of brick && if ball y value > upper left edge of brick
@@ -130,7 +176,7 @@ const ball = { // ball object
 	},
 	boundariesLogic() {
 		if (this.y + this.vy < 0) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
-		this.vy = -this.vy
+			this.vy = -this.vy
 		}
 		else if (this.y + this.vy > 700) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
 			if (game.lives > 1) { // losing a life
@@ -206,6 +252,7 @@ const level1Bricks = { // brick object
 	spaceAbove: 20,
 	index: Math.random(10),
 	color: ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec', '#85cb71', '#903934', '#1730c8', '#995f86']
+}
 	// createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
 		// for (let i = 50; i < w; i+=90) { // 9 across
 		// 	for (let j = 20; j < h; j+=40) { // 6 down
@@ -220,7 +267,6 @@ const level1Bricks = { // brick object
 		// 	}
 		// }
 	// }
-}
 
 // FUNCTIONS
 
@@ -287,8 +333,11 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('start-game').addEventListener('click', (e) => {
 	ball.drawBall();
 	paddle.drawPaddle();
-	let bricks = new Brick();
-	bricks.draw();
+	game.drawBricks(54);
+	// let bricks = new Brick();
+	// bricks.draw();
+	// game.createBricks()
+	// game.drawBricks()
 	animate();
 	$('#start-screen').hide();
 	$('#level1').show();
