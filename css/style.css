@@ -3,29 +3,19 @@ body {
 	min-width: 940px;
 	margin: 0;
 	padding: 0;
-	background: linear-gradient(white 0%, aqua 20%, blue 60%, navy 100%);
-	-webkit-animation: Gradient 15s ease infinite;
-	-moz-animation: Gradient 15s ease infinite;
-	animation: Gradient 15s ease infinite;
-}
-
-@-webkit-keyframes Gradient {
-    0%{background-position:50% 0%}
-    50%{background-position:51% 100%}
-    100%{background-position:50% 0%}
-}
-@keyframes Gradient { 
-    0%{background-position:50% 0%}
-    50%{background-position:51% 100%}
-    100%{background-position:50% 0%}
+	height: 100%;
+	width: 100%;
+	background: linear-gradient(to right, rgba(34,47,122,0.67) 12%,rgba(34,47,122,1) 21%,rgba(34,47,122,1) 50%,rgba(34,47,122,1) 79%,rgba(34,47,122,0.67) 88%);
 }
 
 html, body {
 	height: 100%;
 }
 
-#start-screen, #level1, #game-over {
-	background-color: black;
+#start-screen, #level1, #game-over, #you-win {
+	background-image: url('https://puu.sh/CuegE/23beb1e1e8.png');
+	background-position: center;
+	background-size: cover;
 	height: 765px;
 	width: 900px;
 	text-align: center;
@@ -41,6 +31,10 @@ h1 {
 	padding: 150px 0 0 0;
 	font-family: 'Coiny', cursive;
 	font-size: 90px;
+	text-shadow: black 5px 10px 15px;
+	-webkit-text-fill-color: white; /* Will override color (regardless of order) */
+	-webkit-text-stroke-width: 2px;
+	-webkit-text-stroke-color: navy;
 }
 
 h2 {
@@ -60,14 +54,15 @@ h2 {
 	max-width: 900px;
 }
 
-.start, #play-again, #end-button, #pause-button, #lives-text, #level-text {
+.start, .play-again, #end-button, #pause-button, #lives-text, #level-text {
 	text-align: center;
 	font-family: 'Montserrat Alternates', sans-serif;
+	border: 1px solid navy;
 	border-radius: 20px;
 	padding: 5px;
 }
 
-.start, #play-again {
+.start, .play-again {
 	font-size: 30px;
 }
 
