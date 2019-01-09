@@ -20,19 +20,19 @@ const colors = ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec'
 // CLASS
 
 class Brick {
-	constructor(x, y, width, height) {
+	constructor(x, y) {
 		this.x = x;
 		this.y = y;
 		this.color = colors[parseInt(Math.random() * colors.length)];
 		// console.log(this.color)
-		this.width = width;
-		this.height = height;
+		this.width = 70;
+		this.height = 20;
 	}
 	draw() { 
 		// canvas -- just draw one brick
 		// console.log('brick.draw()')
 		ctxLevel1.beginPath();
-		ctxLevel1.rect(this.x, this.y, 70, 20);
+		ctxLevel1.rect(this.x, this.y, this.width, this.height);
 		ctxLevel1.strokeStyle = 'black';
 		ctxLevel1.fillStyle = this.color; // random color generation from array
 		ctxLevel1.lineWidth = 1;
@@ -48,6 +48,9 @@ class Brick {
 const game = {
 	lives: 3,
 	level: 1,
+	rows: 6,
+	columns: 9,
+	bricksArray: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
@@ -65,15 +68,11 @@ const game = {
 		$('#lives-text').text("Lives: " + this.lives);
 		// $('#level1').hide();
 		// $('#lost-a-life').show();
-	}
-}
-
-const bricks = {
-	x: 60, // initial X on first brick
-	y: 60, // initial Y
-	width: 70,
-	height: 20,
-	bricksArray: [],
+	},
+	// x: 60, // initial X on first brick
+	// y: 60, // initial Y
+	// width: 70,
+	// height: 20,
 	drawBricks() { 
 		// console.log("drawBricks");
 		// iterater over this.bricks
@@ -91,13 +90,20 @@ const bricks = {
 					// remove brick from displayed array .pop
 
 	},
-	createBrick(x, y, width, height) {
+	createBricks(x, y) {
 		// loop for up to num of bricks
-		for (let i = 0; i < 54; i++) { // 54 bricks in level 1
-			let brick = new Brick(x, y, width, height);
-			this.bricksArray.push(brick);
+		for (let i = 0; i < this.rows; i++) {
+			for (let j = 0; j < this.columns; j++) {
+				// get upper left corner
+				// x  = index * (width + space)
+				// y  = index * (height + space)
+				let x = i * (70 + 30);
+				let y = j * (40 + 20);
+				let brick = new Brick(x, y);
+				this.bricksArray.push(brick);
+			}
+		}
 			// console.log(brick);
-		};
 		this.drawBricks();
 		// 	});
 			
@@ -125,8 +131,7 @@ const bricks = {
 	// initialCreateBrick(){
 	// 	this.createBrick(this.x, this.y, this.width, this.height);
 	// }
-		// for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
-		// 	for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
+		// 
 		// 		let brick = new Brick(x, y, color, width, height);
 		// 		level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
 		// 		// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
@@ -326,7 +331,7 @@ function animate() { // animation function
 	// }
 	trailingEffect();
 	background();
-	bricks.drawBricks();
+	game.drawBricks();
 	ball.drawBall();
 	paddle.drawPaddle();
 	ball.movementLogic();
@@ -356,9 +361,9 @@ $(document).on('keydown', (e) => {
 $('#start-game').on('click', (e) => {
 	ball.drawBall();
 	paddle.drawPaddle();
-	bricks.createCoordinates();
-	// game.createBrick();
-	console.log(bricks.bricksArray);
+	// bricks.createCoordinates();
+	game.createBricks();
+	// console.log(bricks.bricksArray);
 	// game.drawBricks(54);
 	// let bricks = new Brick();
 	// bricks.draw();
