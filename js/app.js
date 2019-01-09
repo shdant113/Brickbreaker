@@ -76,9 +76,11 @@ const game = {
 	// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick {
 		for (let i = 0; i < this.bricksArray.length; i++) {
 			if (ball.x > this.bricksArray[i].x && ball.x < (this.bricksArray[i].x + this.bricksArray[i].width) && ball.y > this.bricksArray[i].y && ball.y < (this.bricksArray[i].y + this.bricksArray[i].height)) {
+				// if (ball.)
 				ball.vx = -ball.vx;
 				ball.vy = -ball.vy;
 				console.log('brick collision');
+				this.bricksArray.splice(i, 1);
 			};
 		}
 	},
@@ -88,9 +90,9 @@ const game = {
 	// },
 	createBricks(x, y) {
 		// loop for up to num of bricks
-		for (let i = 0; i < this.rows; i++) {
-			for (let j = 0; j < this.columns; j++) {
-				let x = i * (70 + 70) + 50; // x  = index * (width + space)
+		for (let i = 0; i < this.columns; i++) {
+			for (let j = 0; j < this.rows; j++) {
+				let x = i * (60 + 30) + 55; // x  = index * (width + space)
 				let y = j * (40 + 10) + 30; // y  = index * (height + space)
 				let brick = new Brick(x, y);
 				this.bricksArray.push(brick);
