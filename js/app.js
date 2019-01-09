@@ -1,5 +1,3 @@
-// console.log('thing')
-
 // LEVEL 1 SCRIPT
 
 // grab canvas
@@ -15,7 +13,6 @@ const h = level1Canvas.height;
 
 // color array
 const colors = ['#edb3f6', '#41027d', '#82e0b0', '#2b9a53', '#8287d4', '#9702ec', '#85cb71', '#903934', '#1730c8', '#995f86'];
-// let index = Math.floor(Math.random(10));
 
 // CLASS
 
@@ -24,13 +21,11 @@ class Brick {
 		this.x = x;
 		this.y = y;
 		this.color = colors[parseInt(Math.random() * colors.length)];
-		// console.log(this.color)
 		this.width = 70;
 		this.height = 20;
 	}
 	draw() { 
 		// canvas -- just draw one brick
-		// console.log('brick.draw()')
 		ctxLevel1.beginPath();
 		ctxLevel1.rect(this.x, this.y, this.width, this.height);
 		ctxLevel1.strokeStyle = 'black';
@@ -69,17 +64,11 @@ const game = {
 		// $('#level1').hide();
 		// $('#lost-a-life').show();
 	},
-	// x: 60, // initial X on first brick
-	// y: 60, // initial Y
-	// width: 70,
-	// height: 20,
 	drawBricks() { 
-		// console.log("drawBricks");
 		// iterater over this.bricks
 		// call brick.draw for each brick
 		this.bricksArray.forEach((brick) => {
 			brick.draw();
-			// console.log('brick.draw')
 		})
 	},
 	removeBricks() {
@@ -88,89 +77,48 @@ const game = {
 				// if ball x value < left edge of brick + width && if ball y value < upper left edge + height
 					// reverse direction of ball
 					// remove brick from displayed array .pop
-
 	},
 	createBricks(x, y) {
 		// loop for up to num of bricks
 		for (let i = 0; i < this.rows; i++) {
 			for (let j = 0; j < this.columns; j++) {
-				// get upper left corner
-				// x  = index * (width + space)
-				// y  = index * (height + space)
-				let x = i * (70 + 30);
-				let y = j * (40 + 20);
+				let x = i * (70 + 60) + 50; // x  = index * (width + space)
+				let y = j * (40 + 10) + 30; // y  = index * (height + space)
 				let brick = new Brick(x, y);
 				this.bricksArray.push(brick);
 			}
 		}
-			// console.log(brick);
 		this.drawBricks();
-		// 	});
-			
-		// });
-			// create new brick
-			// push into brick array this.bricks
 	},
-	createCoordinates() {
-		const betweenX = 100; // space between Xs
-		const betweenY = 40; // space between Ys
-		let x = this.x; 
-		let y = this.y;
-			if (this.bricksArray.length > 0) { // if not first brick
-				x = this.bricksArray[this.bricksArray.length - 1].x; // x = value of x of last indexed brick 
-				y = this.bricksArray[this.bricksArray.length - 1].y; // y = y value of last indexed brick
-				if (this.bricksArray[this.bricksArray.length - 1].x > w - 70) { // if the last x (top left) value is higher than the width of the canvas minus the width of a brick, stop making bricks
-					x = 60;
-					y += betweenY; // go to building next row
-				} else {
-					x += betweenX; // if not going to next row, space between next brick
-				}
-			}
-		this.createBrick(x, y, this.width, this.height);
+	trailingEffect() {
+		ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
+	  	ctxLevel1.beginPath();
+	  	ctxLevel1.rect(0, 0, w, h);
+	  	ctxLevel1.fill();
 	},
-	// initialCreateBrick(){
-	// 	this.createBrick(this.x, this.y, this.width, this.height);
-	// }
-		// 
-		// 		let brick = new Brick(x, y, color, width, height);
-		// 		level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
-		// 		// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
-		// 		// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
-		// 		level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
-		// 		this.theBricks.push(brick);
-		// 	}
-		// }
-	// drawBricks() {
-		/*
-		this.pushtoArray();
-		this.pullXFromArray();
-		this.pullYFromArray();
-		ctxLevel1.strokeStyle = 'black';
-		ctxLevel1.fillStyle = level1Bricks.color[level1Bricks.index]; // random color generation from array
-		ctxLevel1.lineWidth = 1;
-		ctxLevel1.shadowColor = 'black';
-		ctxLevel1.shadowBlur = 3;
+	background() {
+		ctxLevel1.strokeStyle = 'navy';
+		ctxLevel1.lineWidth = 5;
+		ctxLevel1.shadowColor = 'navy';
+		ctxLevel1.shadowBlur = 20;
+		for (let i = -38.5; i < w; i+=140) {
+			ctxLevel1.beginPath();
+			ctxLevel1.moveTo(i, 0);
+			ctxLevel1.lineTo(i, h);
+			ctxLevel1.stroke();
+		}
+		for (let i = -5; i < h; i+=40) {
+			ctxLevel1.beginPath();
+			ctxLevel1.moveTo(0, i);
+			ctxLevel1.lineTo(w, i);
+			ctxLevel1.stroke();
+		}
+		ctxLevel1.shadowBlur = 0;
+		ctxLevel1.lineWidth = 20;
 		ctxLevel1.beginPath();
-		ctxLevel1.rect(level1Bricks.x, level1Bricks.y, level1Bricks.width, level1Bricks.height);
-		ctxLevel1.fill();
+		ctxLevel1.rect(0, 0, 900, 700);
 		ctxLevel1.stroke();
-		*/
-
-		// for (let i = 0; i < level1Bricks.rows; i++) {
-		// 	this.theBricks[i].push();
-		// 	for (let j = 0; j < level1Bricks.columns; j++) {
-		// 		this.theBricks[i][j].push();
-		// 	}
-	// },
-	// pushtoArray() {
-	// 	for (let i = 0; i < level1Bricks.rows; i++) { // 9 across
-	// 		for (let j = 0; j < level1Bricks.columns; j++) { // 6 down
-	// 			level1Bricks.x = [i] * (level1Bricks.width + level1Bricks.spaceBetween) + 50;
-	// 			// x = the width of the brick + the set space between bricks + 50 (space between first brick and wall)
-	// 			// multiply by i because each brick is evenly spaced, so each index * the result spaces the bricks properly
-	// 			level1Bricks.y = [j] * (level1Bricks.height + level1Bricks.spaceBetween) + 10;
-	// 			this.theBricks.push(level1Bricks.x, level1Bricks.y);
-	// 
+	}
 }
 
 const ball = { // ball object
@@ -207,7 +155,6 @@ const ball = { // ball object
 				paddle.resetPaddle();
 				this.resetBall();
 				game.loseALife();
-				console.log("lives are ", game.lives, " lives");
 			} else {
 				game.gameOver(); // game ending
 			}
@@ -222,7 +169,6 @@ const ball = { // ball object
 			if (this.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
 				if (this.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
 					this.vy = -this.vy // reverse direction of ball
-					// paddle.velocity(pulse);
 				}
 			}
 		}
@@ -265,78 +211,18 @@ const paddle = { // paddle object
 	}
 }
 
-// const level1Bricks = { // brick object
-	// x: 0,
-	// y: 0,
-	// columns: 9,
-	// rows: 6,
-	// height: 10,
-	// width: 70,
-	// spaceBetween: 20,
-	// spaceAbove: 20,
-	
-// }
-	// createBricks() { // method for creating bricks --> may need updating depending on whether or not I can hardcode brick creation once logic to destroy bricks is added
-		// for (let i = 50; i < w; i+=90) { // 9 across
-		// 	for (let j = 20; j < h; j+=40) { // 6 down
-		// 		if (i < 810 && j < 260) { // stops bricks from being created after certain points on the board
-		// 			ctxLevel1.fillStyle = this.color;
-		// 			ctxLevel1.strokeStyle = "black";
-		// 			ctxLevel1.beginPath();
-		// 			ctxLevel1.rect(i, j, 70, 10);
-		// 			ctxLevel1.fill();
-		// 			ctxLevel1.stroke();
-		// 		}
-		// 	}
-		// }
-	// }
-
 // FUNCTIONS
 
-function trailingEffect() {
-	ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
-  	ctxLevel1.beginPath();
-  	ctxLevel1.rect(0, 0, w, h);
-  	ctxLevel1.fill();
-}
-
-function background() {
-	ctxLevel1.strokeStyle = 'navy';
-	ctxLevel1.lineWidth = 5;
-	ctxLevel1.shadowColor = 'navy';
-	ctxLevel1.shadowBlur = 20;
-	for (let i = -38.5; i < w; i+=140) {
-		ctxLevel1.beginPath();
-		ctxLevel1.moveTo(i, 0);
-		ctxLevel1.lineTo(i, h);
-		ctxLevel1.stroke();
-	}
-	for (let i = -5; i < h; i+=40) {
-		ctxLevel1.beginPath();
-		ctxLevel1.moveTo(0, i);
-		ctxLevel1.lineTo(w, i);
-		ctxLevel1.stroke();
-	}
-	ctxLevel1.shadowBlur = 0;
-	ctxLevel1.lineWidth = 20;
-	ctxLevel1.beginPath();
-	ctxLevel1.rect(0, 0, 900, 700);
-	ctxLevel1.stroke();
-}
-// let x = 0;
 function animate() { // animation function
-	// x++;
-	// if(x==20) {
-	// 	return
-	// }
-	trailingEffect();
-	background();
+	game.trailingEffect();
+	game.background();
 	game.drawBricks();
 	ball.drawBall();
 	paddle.drawPaddle();
 	ball.movementLogic();
 	ball.boundariesLogic();
 	ball.paddleCollisions();
+	console.log('animaation running');
 	amt = window.requestAnimationFrame(animate);
 }
 
@@ -361,13 +247,7 @@ $(document).on('keydown', (e) => {
 $('#start-game').on('click', (e) => {
 	ball.drawBall();
 	paddle.drawPaddle();
-	// bricks.createCoordinates();
 	game.createBricks();
-	// console.log(bricks.bricksArray);
-	// game.drawBricks(54);
-	// let bricks = new Brick();
-	// bricks.draw();
-	// game.drawBricks()
 	animate();
 	$('#start-screen').hide();
 	$('#level1').show();
@@ -379,10 +259,14 @@ $('#end-button').on('click', (e) => {
 })
 
 $('#play-again').on('click', (e) => {
-	// TO FIX, MAKE THE SAME AS START GAME BUTTON	
+	// ANIMATION SLOWS DOWN DRAMATICALLY EVERY TIME THIS RUNS
 	game.playAgain();
 	paddle.resetPaddle();
+	// paddle.drawPaddle();
 	ball.resetBall();
+	// ball.drawBall();
+	game.createBricks();
+	$('#level1').show();
 });
 
 $(document).on('mousemove', (e) => {
