@@ -15,6 +15,8 @@ const h = level1Canvas.height;
 // color array
 const colors = ['#cc0000', '#00cc00', '#cc33ff', '#ff275d', '1a1aff', '#6600cc', '#ffff00', '#0000ff', '#ff33cc', '#ff9933'];
 
+let stopped = false;
+
 // CLASS
 
 class Brick {
@@ -47,39 +49,23 @@ const game = {
 	level: 1,
 	rows: 6,
 	columns: 9,
-	paused: false,
+	score: 0,
 	bricksArray: [],
+	coordinates: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
-		amtEnd = window.cancelAnimationFrame(animate);
+		stopped = true;
 	},
 	playAgain() {
+		stopped = true;
 		$('#game-over').hide();
 		$('#level1').show();
 		this.level = 1;
 		this.lives = 3;
 		$('#lives-text').text("Lives: " + this.lives);
 		$('#level-text').text("Level: " + this.level);
-	},
-	pauseGame() {
-		this.paused = true;
-		if (this.paused = true) {
-			window.cancelAnimationFrame(animate);
-			return animate();
-		}
-		() => {
-			while (this.paused === true) {
-				$('#pause-button').text('Unpause');
-			}
-		}
-	},
-	unpauseGame() {
-		this.paused = false;
-		if (this.paused = false) {
-			animate();
-			$('#pause-button').text('Pause');
-		}
+		stopped = false;
 	},
 	loseALife() {
 		--this.lives;
@@ -97,38 +83,150 @@ const game = {
 		})
 	},
 	removeBricks() {
-	// collision
-	// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick {
+	// // collision
+	// // while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick {
+
+	// 	// ISSUES
+
+	// 	// ball goes through top of bricks, reverses when it hits the bottom
+	// 	// ball does not go back to the left or back to the right when it hits the side of a brick
+	// 	// 
+
+	// 	// POSSIBLE
+
+	// 	// left edge of ball contacts 
+	// 		// right edge of brick --> incl corners
+	// 			// if ball.y >= y value corresponding with brick.x + brick.width AND <= (y value corresponding with brick.x + brick.width) - brick.height 
+	// 				// reverse ball.vx
+	// 	// right edge of ball contacts
+	// 		// left edge of brick --> incl corners
+	// 			// ball.y >= brick.x AND <= brick.x - brick.height
+	// 				// reverse ball.vx
+	// 	// top edge of ball contacts 
+	// 		// bottom of brick --> no corners
+	// 			// ball.x > brick.x - brick.height AND < brick.x - brick.height + brick.width
+	// 				// reverse ball.vy
+	// 	// bottom edge of ball contacts
+	// 		// top of brick --> no corners
+	// 			// ball.x > brick.x AND < brick.x + brick.width
+	// 				// reverse ball.vy
+
+
+	// 	// ball.x > brick.x AND < brick.x + brick.width
+	// 	// ball.y > brick.y AND < brick.y + brick.height 
+
+	// 	// let ballLeft = ball.x - ball.radius
+	// 	// let ballRight = ball.x + ball.radius
+	// 	// let ballTop = ball.y - ball.radius
+	// 	// let ballBottom = ball.y + ball.radius
+	// 	for (let i = 0; i < this.bricksArray.length; i++) {
+	// 		
+	// 		if (ball.x >= this.bricksArray[i].x && ball.x <= this.bricksArray[i].x + this.bricksArray[i].width && ball.y > this.bricksArray[i].y && ball.y < this.bricksArray[i].y + this.bricksArray[i].height) {
+	// 			if (ball.y <= this.bricksArray[i].x - this.bricksArray[i].height + this.bricksArray[i].width && ball.y >= this.bricksArray[i].x + brick.width) {
+	// 				ball.vx = ball.vx * -1
+	// 			}
+	// 			if (ball.y >= this.bricksArray[i].x && ball.y <= this.bricksArray[i].x - this.bricksArray[i].height) {
+	// 				ball.vx = ball.vx * -1
+	// 			}
+	// 			if (ball.x > this.bricksArray[i].x - this.bricksArray[i].height)
+	// 		}
+	// 	}
 		for (let i = 0; i < this.bricksArray.length; i++) {
-			if (ball.x > this.bricksArray[i].x && ball.x < (this.bricksArray[i].x + this.bricksArray[i].width) && ball.y > this.bricksArray[i].y && ball.y < (this.bricksArray[i].y + this.bricksArray[i].height)) {
+			if (
+				ball.x > this.bricksArray[i].x && 
+				ball.x < (this.bricksArray[i].x + this.bricksArray[i].width) && 
+				ball.y > this.bricksArray[i].y && 
+				ball.y < (this.bricksArray[i].y + this.bricksArray[i].height)
+			) {
+				console.log("brick collision")
+				// RIGHT EDGE
+				// GOAL: if it hits right edge, direction should change from leftard to rightward (MAYBE ADD: and the ball was, in fact, moving leftward)
+
+
+				// ball x is to the left of the right side of the brick
+				if (ball.x <= this.bricksArray[i].x + this.bricksArray[i].width) {
+					console.log("ball x is to the left of the right side of the brick")
+					// if ball is below top of brick and ball is above the bottom  
+					// (ball actually between the top and bottom of brick)
+					if (ball.y >= this.bricksArray[i].y && ball.y <= this.bricksArray[i].y + this.bricksArray[i].height) {
+						console.log("ball actually between the top and bottom of brick")
+						ball.vx = ball.vx * -1
+						console.log("horizontal changes")
+						this.score++
+					}
+				}
+						// LEFT EDGE
+				else if (ball.x >= this.bricksArray[i].x) {
+					console.log("ball x is to the right of the left edge of the brick")
+					if (ball.y >= this.bricksArray[i].y && ball.y <= this.bricksArray[i].y + this.bricksArray[i].height) {
+						console.log("ball actually between the top and bottom of brick")
+						ball.vx = ball.vx * -1
+						console.log("horizontal changes")
+						this.score++
+					}
+				}
+						// BOTTOM EDGE NO CORNERS
+				// if ball y is above the bottom of this brick
+				else if (ball.y <= this.bricksArray[i].y + this.bricksArray[i].height) {
+					console.log("ball passed bottom edge of brick")
+					if (ball.x > this.bricksArray[i].x && ball.x < this.bricksArray[i].x + this.bricksArray[i].width) {
+						ball.vy = ball.vy * -1
+						console.log("vertical changes")
+						this.score++
+					}
+				}
+						// TOP EDGE NO CORNERS
+				else if (ball.y >= this.bricksArray[i].y) {
+					console.log("ball passed the top edge of the brick")
+					if (ball.x > this.bricksArray[i].x && ball.x < this.bricksArray[i].x + this.bricksArray[i].width) {
+						ball.vy = ball.vy * -1
+						console.log("vertical changes")
+						this.score++
+					}
+				}
+			this.bricksArray.splice(i, 1);
+			} // if ball is colliding with brick
+
+
+
+
+
+
+
+
+		// for (let i = 0; i < this.bricksArray.length; i++) {
+		// 	if (ball.x - ball.radius > this.bricksArray[i].x && ball.x - ball.radius < (this.bricksArray[i].x + this.bricksArray[i].width) && ball.y - ball.radius > this.bricksArray[i].y && ball.y - ball.radius < (this.bricksArray[i].y + this.bricksArray[i].height)) {
+		// 		if (ball.x - ball.radius >= this.bricksArray[i].y && ball.x - ball.radius <= this.bricksArray[i].y + this.bricksArray[i].height) {
+		// 			ball.vx = ball.vx * -1
+		// 		}
+		// 		if (ball.x - ball.radius >= this.bricksArray[i].x && ball.y - ball.radius <= this.bricksArray[i].y + this.bricksArray[i].width) {
+		// 			ball.vy = ball.vy * -1
+		// 		} else {
+		// 			ball.vy = ball.vy * -1
+		// 		}
 				// if ball hits from left
-				if (ball.x = this.bricksArray[i].x) {
-					ball.vx = ball.vx * -1
-					// console.log("from left ball.vx was positive is now " + ball.vx);
-					// console.log("from left ball.vy was positive is now " + ball.vy);
-				}
-				// if ball hits from the right
-				if (ball.x = this.bricksArray[i].x + this.bricksArray[i].width) {
-					ball.vx = ball.vx * -1
-					// console.log("from right ball.vx was negative is now " + ball.vx);
-					// console.log("from right ball.vy was  " + ball.vy)
-				}
+				// 	// console.log("from right ball.vx was negative is now " + ball.vx);
+				// 	// console.log("from right ball.vy was  " + ball.vy)
+				// }
 				// if the ball hits from the top
-				if (ball.y = this.bricksArray[i].y) {
-					ball.vy = ball.vy * -1
+				// if (ball.y - ball.radius === this.bricksArray[i].y) {
+				// 	ball.vy = ball.vy * -1
 					// console.log("from top ball.vx is positive and" + ball.vx)
 					// console.log("from top ball.vy is was positive is now " + ball.vy)
-				}
-				// if the ball hits from the bottom 
-				if (ball.y = this.bricksArray[i].y + this.bricksArray[i].height) {
-					ball.vy = ball.vy * -1
-					// console.log("from bottom ball.vx is was positive and should stay positive, is now " + ball.vx)
-					// console.log("from bottom ball.vy is was negative is now " + ball.vy)
-				}
-				console.log('brick collision');
-				this.bricksArray.splice(i, 1);
-			};
-		}
+				// // if the ball hits from the bottom 
+				// if (ball.y = this.bricksArray[i].y + this.bricksArray[i].height) {
+				// 	ball.vy = ball.vy * -1
+				// 	// console.log("from bottom ball.vx is was positive and should stay positive, is now " + ball.vx)
+				// 	// console.log("from bottom ball.vy is was negative is now " + ball.vy)
+	
+
+			// if (ball.x + ball.radius === this.bricksArray[i].x || ball.x - ball.radius === (this.bricksArray[i].x + this.bricksArray[i].width) {
+			// 	ball.vx = 
+			// } && ball.y - ball.radius > this.bricksArray[i].y && ball.y - ball.radius < (this.bricksArray[i].y + this.bricksArray[i].height))
+			// }
+		} // for each bric k
+
+		// delete all the bricks at saved indices
 	},
 	createBricks(x, y) {
 		// loop for up to num of bricks
@@ -142,6 +240,20 @@ const game = {
 		}
 		this.drawBricks();
 		// console.log(this.bricksArray)
+	},
+	// getBrickCoordinates() {
+	// 	const theCoordinates = level1Canvas.getBoundingClientRect();
+	// 	for (let i = 0; i < this.bricksArray.length; i++) {
+	// 		const theX = this.bricksArray[i].clientX - theCoordinates.left;
+	// 		const theY = this.bricksArray[i].clientY - theCoordinates.top;
+	// 		console.log("x: " + theX + ", y: " + theY)
+	// 	}
+	victoryCondition() {
+		if (this.score === 54) {
+			$('#level1').hide();
+			$('#you-win').show();
+			$('#game-over').hide();
+		}
 	},
 	trailingEffect() {
 		ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
@@ -200,7 +312,7 @@ const ball = { // ball object
 		this.y += this.vy; // movement of ball vertically
 	},
 	boundariesLogic() {
-		if (this.y + this.vy < 0) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
+		if (this.y + this.vy < 0 + this.radius) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
 			this.vy = -this.vy
 		}
 		else if (this.y + this.vy > 700) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
@@ -210,25 +322,19 @@ const ball = { // ball object
 				game.gameOver(); // game ending
 			}
 		}
-		else if (this.x + this.vx > w || this.x + this.vx < 0) { // horizontal boundary " " " 
+		else if (this.x + this.vx > w - this.radius || this.x + this.vx < 0 + this.radius) { // horizontal boundary " " " 
 			this.vx = -this.vx
 		}
 		game.removeBricks();
 	},
 	paddleCollisions() {
 		// logic for contact between ball and paddle
-		if (this.y + this.vy > 650) { // paddle y = 650
+		if (this.y + this.vy > 650 - ball.radius) { // paddle y = 650
 			if (this.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
 				if (this.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
 					this.vy = -this.vy // reverse direction of ball
 				}
 			}
-		}
-	},
-	victoryCondition() {
-		if (this.bricksArray.length === 0) {
-			$('#level1').hide();
-			$('#you-win').show();
 		}
 	}
 }
@@ -270,7 +376,6 @@ const paddle = { // paddle object
 }
 
 // FUNCTIONS
-
 function animate() { // animation function
 	game.trailingEffect();
 	game.background();
@@ -280,8 +385,13 @@ function animate() { // animation function
 	ball.movementLogic();
 	ball.boundariesLogic();
 	ball.paddleCollisions();
+	game.victoryCondition();
 	// console.log('animaation running');
-	amt = window.requestAnimationFrame(animate);
+	if(!stopped) {
+		setTimeout(()=>{
+			amt = window.requestAnimationFrame(animate);
+		}, 100)	
+	}
 }
 
 $('#level1').hide();
@@ -301,6 +411,7 @@ $(document).on('keydown', (e) => {
 	if (key === "ArrowRight" || key === "d") {
 		paddle.movePaddleRight();
 	}
+	if(key ==="Enter") stop();
 });
 
 $('#start-game').on('click', (e) => {
@@ -313,13 +424,13 @@ $('#start-game').on('click', (e) => {
 });
 
 $('#pause-button').on('click', (e) => {
-	if (game.paused === false) {
-		game.pauseGame();
+	if (!stopped) {
+		stopped = true;
+		$('#pause-button').text('Unpause');
+	} else if (stopped) {
+		stopped = false;
+		$('#pause-button').text('Pause');
 	}
-	if (game.paused === true) {
-		game.unpauseGame();
-	}
-	// $('#pause-button').replaceWith('<button>Unpause</button>');
 });
 
 $('#end-button').on('click', (e) => {
@@ -339,10 +450,10 @@ $('.play-again').on('click', (e) => {
 });
 
 $(document).on('mousemove', (e) => {
-	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
-	$('.start').velocity("fadeIn", {duration: 1000});
-	$('.play-again').velocity("fadeOut", {delay: 500, duration: 1000});
-	$('.play-again').velocity("fadeIn", {duration: 1000});
+	$('.start').velocity("fadeOut", {duration: 1000}, {visibility: 'visible'});
+	$('.start').velocity("fadeIn", {duration: 1000}, {visibility: 'visible'});
+	$('.play-again').velocity("fadeOut", {duration: 1000}, {visibility: 'visible'});
+	$('.play-again').velocity("fadeIn", {duration: 1000}, {visibility: 'visible'});
 });
 
 
