@@ -123,15 +123,16 @@ const game = {
 				// this if is true if the ball hits the top or bottom
 				// if ball is to the right of the left edge of the brick AND the left of the right edge of the brick
 				if (ball.x + ball.radius >= brick.x && ball.x - ball.radius <= brick.x + brick.width) { 
-					  
-					
 					// if ball is below top of brick and ball is above the bottom of the brick
 					if (ball.y >= brick.y && ball.y <= brick.y + brick.height) { 
 						console.log("collision on the sides")
 						ball.vx = ball.vx * -1		
 						console.log("horizontal changes")
 						this.score++
-					} else {
+					}
+				}
+				if (ball.y + ball.radius >= brick.y && ball.y - ball.radius < brick.y + brick.height) {
+					if (ball.x >= brick.x && ball.x <= brick.x + brick.width) {
 						console.log("collision with ball between the edges")
 						ball.vy = ball.vy * -1
 						console.log("vertical changes")
