@@ -67,7 +67,7 @@ h1 {
 	max-width: 900px;
 }
 
-.start, .play-again, #end-button, #pause-button, #lives-text, #level-text {
+.start, /*.play-again,*/ #end-button, #pause-button, #lives-text, #level-text {
 	text-align: center;
 	font-family: 'Montserrat Alternates', sans-serif;
 	border: 1px solid navy;
@@ -75,7 +75,7 @@ h1 {
 	padding: 5px;
 }
 
-.start, .play-again {
+.start /*.play-again*/ {
 	font-size: 30px;
 }
 

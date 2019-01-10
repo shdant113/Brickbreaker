@@ -18,7 +18,6 @@ let stopped = false;
 
 // CLASS
 
-
 class Brick {
 	constructor(x, y) {
 		this.x = x;
@@ -55,18 +54,19 @@ const game = {
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
-		stopped = true;
+		this.toggleAnimation();
 	},
-	playAgain() {
-		stopped = false;
-		$('#game-over').hide();
-		$('#level1').show();
-		this.level = 1;
-		this.lives = 3;
-		$('#lives-text').text("Lives: " + this.lives);
-		$('#level-text').text("Level: " + this.level);
-		animate();
-	},
+	// playAgain() {
+	// 	stopped = false;
+	// 	this.toggleAnimation();
+	// 	$('#game-over').hide();
+	// 	$('#level1').show();
+	// 	this.level = 1;
+	// 	this.lives = 3;
+	// 	this.score = 0;
+	// 	$('#lives-text').text("Lives: " + this.lives);
+	// 	$('#level-text').text("Level: " + this.level);
+	// },
 	loseALife() {
 		--this.lives;
 		$('#lives-text').text("Lives: " + this.lives);
@@ -108,49 +108,38 @@ const game = {
 				// top of ball above the bottom edge of the brick
 				ball.y - ball.radius < (brick.y + brick.height)
 			) {
-
-				// RIGHT AND LEFT EDGE WITH CORNERS
-				console.log(ball.x, "ball.x")
-				console.log(ball.y, "ball.y")
-				console.log(brick.x, "brick.x")
-				console.log(brick.y, "brick.y")
-				console.log(brick.x + brick.width, "brick.x + brick.width")
-				console.log(brick.y + brick.height, "brick.y + brick.height")
-				console.log(ball.vx, "ball.vx")
-				console.log(ball.vy, "ball.vy")
-				game.toggleAnimation();
+				// console.log(ball.x, "ball.x")
+				// console.log(ball.y, "ball.y")
+				// console.log(brick.x, "brick.x")
+				// console.log(brick.y, "brick.y")
+				// console.log(brick.x + brick.width, "brick.x + brick.width")
+				// console.log(brick.y + brick.height, "brick.y + brick.height")
+				// console.log(ball.vx, "ball.vx")
+				// console.log(ball.vy, "ball.vy")
+				// game.toggleAnimation();
 
 				// this if is true if the ball hits the top or bottom
 				// if ball is to the right of the left edge of the brick AND the left of the right edge of the brick
 				if (ball.x + ball.radius >= brick.x && ball.x - ball.radius <= brick.x + brick.width) { 
 					// if ball is below top of brick and ball is above the bottom of the brick
 					if (ball.y >= brick.y && ball.y <= brick.y + brick.height) { 
-						console.log("collision on the sides")
+						// console.log("collision on the sides")
 						ball.vx = ball.vx * -1		
-						console.log("horizontal changes")
-						this.score++
+						// console.log("horizontal changes")
 					}
 				}
+				// if ball is between the top left value of the brick and the bottom left value of the brick
 				if (ball.y + ball.radius >= brick.y && ball.y - ball.radius < brick.y + brick.height) {
+					// if the ball is to the right of the far left edge of the brick and to the left of the far right edge of the brick
 					if (ball.x >= brick.x && ball.x <= brick.x + brick.width) {
-						console.log("collision with ball between the edges")
+						// console.log("collision with ball between the edges")
 						ball.vy = ball.vy * -1
-						console.log("vertical changes")
-						this.score++
+						// console.log("vertical changes")
 					}
 				}
-
-				// TOP & BOTTOM EDGE NO CORNERS
-				// else if (ball.y >= brick.y && ball.y <= brick.y + brick.height) {// if ball is below the top of the brick and above the bottom of the brick
-				// 	console.log("ball y hit the top or bottom edge of the brick") 
-				// 	if (ball.x > brick.x && ball.x < brick.x + brick.width) { // if the ball is to the right of the left edge and left of the right edge of the brick
-				// else {
-				// 	ball.vx = ball.vx * -1
-				// 	// console.log("vertical changes")
-				// 	this.score++
-				// }
-				// }
 				this.bricksArray.splice(i, 1);
+				this.score++
+				console.log(this.score)
 			}
 		}
 	},
@@ -159,6 +148,7 @@ const game = {
 			$('#level1').hide();
 			$('#you-win').show();
 			$('#game-over').hide();
+			this.toggleAnimation();
 		}
 	},
 	trailingEffect() {
@@ -203,7 +193,7 @@ const game = {
 }
 
 const ball = { // ball object
-	x: 550,
+	x: 620,
 	vx: 10,
 	y: 635,
 	vy: -10,
@@ -256,7 +246,7 @@ const ball = { // ball object
 }
 
 const paddle = { // paddle object
-	x: 375,
+	x: 545,
 	y: 650,
 	width: 150,
 	color: 'yellow',
@@ -363,17 +353,18 @@ $('#end-button').on('click', (e) => {
 	$('#game-over').show();
 });
 
-$('.play-again').on('click', (e) => {
-	// ANIMATION SLOWS DOWN DRAMATICALLY EVERY TIME THIS RUNS
-	stopped = true;
-	game.playAgain();
-	paddle.resetPaddle();
-	// paddle.drawPaddle();
-	ball.resetBall();
-	// ball.drawBall();
-	game.createBricks();
-	$('#level1').show();
-});
+// $('.play-again').on('click', (e) => {
+// 	// ANIMATION SLOWS DOWN DRAMATICALLY EVERY TIME THIS RUNS
+// 	stopped = true;
+// 	game.playAgain
+// 	paddle.resetPaddle();
+// 	// paddle.drawPaddle();
+// 	ball.resetBall();
+// 	// ball.drawBall();
+// 	game.createBricks();
+// 	$('#level1').show();
+// 	$('#you-win').hide();
+// });
 
 $(document).on('mousemove', (e) => {
 	$('.start').velocity("fadeOut", {duration: 1000}, {visibility: 'visible'});
