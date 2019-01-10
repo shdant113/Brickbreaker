@@ -6,7 +6,6 @@ const ctxLevel1 = level1Canvas.getContext('2d');
 
 // empty variable
 let amt;
-let amtEnd;
 
 // lazy programming
 const w = level1Canvas.width;
@@ -14,6 +13,8 @@ const h = level1Canvas.height;
 
 // color array
 const colors = ['#cc0000', '#00cc00', '#cc33ff', '#ff275d', '1a1aff', '#6600cc', '#ffff00', '#0000ff', '#ff33cc', '#ff9933'];
+
+let stopped = false;
 
 // CLASS
 
@@ -47,40 +48,25 @@ const game = {
 	level: 1,
 	rows: 6,
 	columns: 9,
-	paused: false,
+	score: 0,
 	bricksArray: [],
+	coordinates: [],
 	gameOver() {
 		$('#level1').hide();
 		$('#game-over').show();
-		amtEnd = window.cancelAnimationFrame(animate);
+		this.toggleAnimation();
 	},
-	playAgain() {
-		$('#game-over').hide();
-		$('#level1').show();
-		this.level = 1;
-		this.lives = 3;
-		$('#lives-text').text("Lives: " + this.lives);
-		$('#level-text').text("Level: " + this.level);
-	},
-	pauseGame() {
-		this.paused = true;
-		if (this.paused = true) {
-			window.cancelAnimationFrame(animate);
-			return animate();
-		}
-		() => {
-			while (this.paused === true) {
-				$('#pause-button').text('Unpause');
-			}
-		}
-	},
-	unpauseGame() {
-		this.paused = false;
-		if (this.paused = false) {
-			animate();
-			$('#pause-button').text('Pause');
-		}
-	},
+	// playAgain() {
+	// 	stopped = false;
+	// 	this.toggleAnimation();
+	// 	$('#game-over').hide();
+	// 	$('#level1').show();
+	// 	this.level = 1;
+	// 	this.lives = 3;
+	// 	this.score = 0;
+	// 	$('#lives-text').text("Lives: " + this.lives);
+	// 	$('#level-text').text("Level: " + this.level);
+	// },
 	loseALife() {
 		--this.lives;
 		$('#lives-text').text("Lives: " + this.lives);
@@ -96,40 +82,6 @@ const game = {
 			brick.draw();
 		})
 	},
-	removeBricks() {
-	// collision
-	// while ball x value > upper left edge of brick - brick height && if ball y value > upper left edge of brick {
-		for (let i = 0; i < this.bricksArray.length; i++) {
-			if (ball.x > this.bricksArray[i].x && ball.x < (this.bricksArray[i].x + this.bricksArray[i].width) && ball.y > this.bricksArray[i].y && ball.y < (this.bricksArray[i].y + this.bricksArray[i].height)) {
-				// if ball hits from left
-				if (ball.x = this.bricksArray[i].x) {
-					ball.vx = ball.vx * -1
-					// console.log("from left ball.vx was positive is now " + ball.vx);
-					// console.log("from left ball.vy was positive is now " + ball.vy);
-				}
-				// if ball hits from the right
-				if (ball.x = this.bricksArray[i].x + this.bricksArray[i].width) {
-					ball.vx = ball.vx * -1
-					// console.log("from right ball.vx was negative is now " + ball.vx);
-					// console.log("from right ball.vy was  " + ball.vy)
-				}
-				// if the ball hits from the top
-				if (ball.y = this.bricksArray[i].y) {
-					ball.vy = ball.vy * -1
-					// console.log("from top ball.vx is positive and" + ball.vx)
-					// console.log("from top ball.vy is was positive is now " + ball.vy)
-				}
-				// if the ball hits from the bottom 
-				if (ball.y = this.bricksArray[i].y + this.bricksArray[i].height) {
-					ball.vy = ball.vy * -1
-					// console.log("from bottom ball.vx is was positive and should stay positive, is now " + ball.vx)
-					// console.log("from bottom ball.vy is was negative is now " + ball.vy)
-				}
-				console.log('brick collision');
-				this.bricksArray.splice(i, 1);
-			};
-		}
-	},
 	createBricks(x, y) {
 		// loop for up to num of bricks
 		for (let i = 0; i < this.columns; i++) {
@@ -142,6 +94,62 @@ const game = {
 		}
 		this.drawBricks();
 		// console.log(this.bricksArray)
+	},
+	brickCollision() {
+		for (let i = 0; i < this.bricksArray.length; i++) {
+			let brick = this.bricksArray[i];
+			if (
+				// ball right of left edge
+				ball.x + ball.radius > brick.x && 
+				// ball left of right edge of brick
+				ball.x - ball.radius < (brick.x + brick.width) && 
+				// bottom of the ball is below top edge of brick
+				ball.y + ball.radius > brick.y && 
+				// top of ball above the bottom edge of the brick
+				ball.y - ball.radius < (brick.y + brick.height)
+			) {
+				// console.log(ball.x, "ball.x")
+				// console.log(ball.y, "ball.y")
+				// console.log(brick.x, "brick.x")
+				// console.log(brick.y, "brick.y")
+				// console.log(brick.x + brick.width, "brick.x + brick.width")
+				// console.log(brick.y + brick.height, "brick.y + brick.height")
+				// console.log(ball.vx, "ball.vx")
+				// console.log(ball.vy, "ball.vy")
+				// game.toggleAnimation();
+
+				// this if is true if the ball hits the top or bottom
+				// if ball is to the right of the left edge of the brick AND the left of the right edge of the brick
+				if (ball.x + ball.radius >= brick.x && ball.x - ball.radius <= brick.x + brick.width) { 
+					// if ball is below top of brick and ball is above the bottom of the brick
+					if (ball.y >= brick.y && ball.y <= brick.y + brick.height) { 
+						// console.log("collision on the sides")
+						ball.vx = ball.vx * -1		
+						// console.log("horizontal changes")
+					}
+				}
+				// if ball is between the top left value of the brick and the bottom left value of the brick
+				if (ball.y + ball.radius >= brick.y && ball.y - ball.radius < brick.y + brick.height) {
+					// if the ball is to the right of the far left edge of the brick and to the left of the far right edge of the brick
+					if (ball.x >= brick.x && ball.x <= brick.x + brick.width) {
+						// console.log("collision with ball between the edges")
+						ball.vy = ball.vy * -1
+						// console.log("vertical changes")
+					}
+				}
+				this.bricksArray.splice(i, 1);
+				this.score++
+				console.log(this.score)
+			}
+		}
+	},
+	victoryCondition() {
+		if (this.score === 54) {
+			$('#level1').hide();
+			$('#you-win').show();
+			$('#game-over').hide();
+			this.toggleAnimation();
+		}
 	},
 	trailingEffect() {
 		ctxLevel1.fillStyle = 'rgba(255, 255, 255, 0.5)'; // adding a trailing effect
@@ -171,12 +179,22 @@ const game = {
 		ctxLevel1.beginPath();
 		ctxLevel1.rect(0, 0, 900, 700);
 		ctxLevel1.stroke();
+	},
+	toggleAnimation() {
+		if (!stopped) {
+			stopped = true;
+			$('#pause-button').text('Unpause');
+		} else if (stopped) {
+			stopped = false;
+			animate();
+			$('#pause-button').text('Pause');
+		}
 	}
 }
 
 const ball = { // ball object
-	x: 450,
-	vx: -10,
+	x: 620,
+	vx: 10,
 	y: 635,
 	vy: -10,
 	color: 'aqua',
@@ -200,7 +218,7 @@ const ball = { // ball object
 		this.y += this.vy; // movement of ball vertically
 	},
 	boundariesLogic() {
-		if (this.y + this.vy < 0) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
+		if (this.y + this.vy < 0 + this.radius) { // top vertical boundary established by reversing the vertical movement of the ball if it meets the boundary
 			this.vy = -this.vy
 		}
 		else if (this.y + this.vy > 700) { // bottom vertical boundary established by resetting paddle and ball if ball goes off screen
@@ -210,31 +228,25 @@ const ball = { // ball object
 				game.gameOver(); // game ending
 			}
 		}
-		else if (this.x + this.vx > w || this.x + this.vx < 0) { // horizontal boundary " " " 
+		else if (this.x + this.vx > w - this.radius || this.x + this.vx < 0 + this.radius) { // horizontal boundary " " " 
 			this.vx = -this.vx
 		}
-		game.removeBricks();
+		game.brickCollision();
 	},
 	paddleCollisions() {
 		// logic for contact between ball and paddle
-		if (this.y + this.vy > 650) { // paddle y = 650
+		if (this.y + this.vy > 650 - ball.radius) { // paddle y = 650
 			if (this.x > paddle.x) { // if x coordinate of the ball is greater than the left edge of the paddle
 				if (this.x < paddle.x + paddle.width) { // if the x coordinate of the ball is less than the right edge of the paddle
 					this.vy = -this.vy // reverse direction of ball
 				}
 			}
 		}
-	},
-	victoryCondition() {
-		if (this.bricksArray.length === 0) {
-			$('#level1').hide();
-			$('#you-win').show();
-		}
 	}
 }
 
 const paddle = { // paddle object
-	x: 375,
+	x: 545,
 	y: 650,
 	width: 150,
 	color: 'yellow',
@@ -270,7 +282,6 @@ const paddle = { // paddle object
 }
 
 // FUNCTIONS
-
 function animate() { // animation function
 	game.trailingEffect();
 	game.background();
@@ -280,10 +291,16 @@ function animate() { // animation function
 	ball.movementLogic();
 	ball.boundariesLogic();
 	ball.paddleCollisions();
+	game.victoryCondition();
 	// console.log('animaation running');
-	amt = window.requestAnimationFrame(animate);
+	if(!stopped) {
+		setTimeout(()=>{
+			amt = window.requestAnimationFrame(animate);
+		}, 30)	
+	}
 }
 
+$('#instructions').hide();
 $('#level1').hide();
 // $('#lost-a-life').hide();
 $('#game-over').hide();
@@ -301,6 +318,7 @@ $(document).on('keydown', (e) => {
 	if (key === "ArrowRight" || key === "d") {
 		paddle.movePaddleRight();
 	}
+	if(key === "Enter") game.toggleAnimation();
 });
 
 $('#start-game').on('click', (e) => {
@@ -312,14 +330,22 @@ $('#start-game').on('click', (e) => {
 	$('#level1').show();
 });
 
+$('#instructions-button').on('click', (e) => {
+	$('#start-screen').hide();
+	$('#instructions').show();
+})
+
+$('#instructions-start-game').on('click', (e) => {
+	ball.drawBall();
+	paddle.drawPaddle();
+	game.createBricks();
+	animate();
+	$('#instructions').hide();
+	$('#level1').show();
+});
+
 $('#pause-button').on('click', (e) => {
-	if (game.paused === false) {
-		game.pauseGame();
-	}
-	if (game.paused === true) {
-		game.unpauseGame();
-	}
-	// $('#pause-button').replaceWith('<button>Unpause</button>');
+	game.toggleAnimation();
 });
 
 $('#end-button').on('click', (e) => {
@@ -327,22 +353,24 @@ $('#end-button').on('click', (e) => {
 	$('#game-over').show();
 });
 
-$('.play-again').on('click', (e) => {
-	// ANIMATION SLOWS DOWN DRAMATICALLY EVERY TIME THIS RUNS
-	game.playAgain();
-	paddle.resetPaddle();
-	// paddle.drawPaddle();
-	ball.resetBall();
-	// ball.drawBall();
-	game.createBricks();
-	$('#level1').show();
-});
+// $('.play-again').on('click', (e) => {
+// 	// ANIMATION SLOWS DOWN DRAMATICALLY EVERY TIME THIS RUNS
+// 	stopped = true;
+// 	game.playAgain
+// 	paddle.resetPaddle();
+// 	// paddle.drawPaddle();
+// 	ball.resetBall();
+// 	// ball.drawBall();
+// 	game.createBricks();
+// 	$('#level1').show();
+// 	$('#you-win').hide();
+// });
 
 $(document).on('mousemove', (e) => {
-	$('.start').velocity("fadeOut", {delay: 500, duration: 1000});
-	$('.start').velocity("fadeIn", {duration: 1000});
-	$('.play-again').velocity("fadeOut", {delay: 500, duration: 1000});
-	$('.play-again').velocity("fadeIn", {duration: 1000});
+	$('.start').velocity("fadeOut", {duration: 1000}, {visibility: 'visible'});
+	$('.start').velocity("fadeIn", {duration: 1000}, {visibility: 'visible'});
+	$('.play-again').velocity("fadeOut", {duration: 1000}, {visibility: 'visible'});
+	$('.play-again').velocity("fadeIn", {duration: 1000}, {visibility: 'visible'});
 });
 
 
