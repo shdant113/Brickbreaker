@@ -15,16 +15,7 @@ const h = level1Canvas.height;
 const colors = ['#cc0000', '#00cc00', '#cc33ff', '#ff275d', '1a1aff', '#6600cc', '#ffff00', '#0000ff', '#ff33cc', '#ff9933'];
 
 let stopped = false;
-const toggleAnimation = () => {
-	if (!stopped) {
-		stopped = true;
-		$('#pause-button').text('Unpause');
-	} else if (stopped) {
-		stopped = false;
-		animate();
-		$('#pause-button').text('Pause');
-	}
-}
+
 // CLASS
 
 
@@ -109,13 +100,13 @@ const game = {
 			let brick = this.bricksArray[i];
 			if (
 				// ball right of left edge
-				ball.x + ball.radius > this.bricksArray[i].x && 
+				ball.x + ball.radius > brick.x && 
 				// ball left of right edge of brick
-				ball.x - ball.radius < (this.bricksArray[i].x + this.bricksArray[i].width) && 
+				ball.x - ball.radius < (brick.x + brick.width) && 
 				// bottom of the ball is below top edge of brick
-				ball.y + ball.radius > this.bricksArray[i].y && 
+				ball.y + ball.radius > brick.y && 
 				// top of ball above the bottom edge of the brick
-				ball.y - ball.radius < (this.bricksArray[i].y + this.bricksArray[i].height)
+				ball.y - ball.radius < (brick.y + brick.height)
 			) {
 
 				// RIGHT AND LEFT EDGE WITH CORNERS
@@ -127,31 +118,36 @@ const game = {
 				console.log(brick.y + brick.height, "brick.y + brick.height")
 				console.log(ball.vx, "ball.vx")
 				console.log(ball.vy, "ball.vy")
-				toggleAnimation();
+				game.toggleAnimation();
 
 				// this if is true if the ball hits the top or bottom
 				// if ball is to the right of the left edge of the brick AND the left of the right edge of the brick
-				if (ball.x + ball.radius >= this.bricksArray[i].x && ball.x - ball.radius <= this.bricksArray[i].x + this.bricksArray[i].width) { 
-					console.log("collision with ball between the edges")  
+				if (ball.x + ball.radius >= brick.x && ball.x - ball.radius <= brick.x + brick.width) { 
+					  
 					
 					// if ball is below top of brick and ball is above the bottom of the brick
-					// if (ball.y >= this.bricksArray[i].y && ball.y <= this.bricksArray[i].y + this.bricksArray[i].height) { 
-					
+					if (ball.y >= brick.y && ball.y <= brick.y + brick.height) { 
+						console.log("collision on the sides")
+						ball.vx = ball.vx * -1		
+						console.log("horizontal changes")
+						this.score++
+					} else {
+						console.log("collision with ball between the edges")
 						ball.vy = ball.vy * -1
 						console.log("vertical changes")
 						this.score++
-					// }
+					}
 				}
 
 				// TOP & BOTTOM EDGE NO CORNERS
-				// else if (ball.y >= this.bricksArray[i].y && ball.y <= this.bricksArray[i].y + this.bricksArray[i].height) {// if ball is below the top of the brick and above the bottom of the brick
+				// else if (ball.y >= brick.y && ball.y <= brick.y + brick.height) {// if ball is below the top of the brick and above the bottom of the brick
 				// 	console.log("ball y hit the top or bottom edge of the brick") 
-				// 	if (ball.x > this.bricksArray[i].x && ball.x < this.bricksArray[i].x + this.bricksArray[i].width) { // if the ball is to the right of the left edge and left of the right edge of the brick
-				else {
-					ball.vx = ball.vx * -1
-					// console.log("vertical changes")
-					this.score++
-				}
+				// 	if (ball.x > brick.x && ball.x < brick.x + brick.width) { // if the ball is to the right of the left edge and left of the right edge of the brick
+				// else {
+				// 	ball.vx = ball.vx * -1
+				// 	// console.log("vertical changes")
+				// 	this.score++
+				// }
 				// }
 				this.bricksArray.splice(i, 1);
 			}
@@ -192,14 +188,24 @@ const game = {
 		ctxLevel1.beginPath();
 		ctxLevel1.rect(0, 0, 900, 700);
 		ctxLevel1.stroke();
+	},
+	toggleAnimation() {
+		if (!stopped) {
+			stopped = true;
+			$('#pause-button').text('Unpause');
+		} else if (stopped) {
+			stopped = false;
+			animate();
+			$('#pause-button').text('Pause');
+		}
 	}
 }
 
 const ball = { // ball object
 	x: 550,
-	vx: 1,
+	vx: 10,
 	y: 635,
-	vy: -1,
+	vy: -10,
 	color: 'aqua',
 	radius: 15,
 	drawBall() { // creating a circle
@@ -297,9 +303,9 @@ function animate() { // animation function
 	game.victoryCondition();
 	// console.log('animaation running');
 	if(!stopped) {
-		// setTimeout(()=>{
+		setTimeout(()=>{
 			amt = window.requestAnimationFrame(animate);
-		// }, 100)	
+		}, 30)	
 	}
 }
 
@@ -321,7 +327,7 @@ $(document).on('keydown', (e) => {
 	if (key === "ArrowRight" || key === "d") {
 		paddle.movePaddleRight();
 	}
-	if(key ==="Enter") toggleAnimation();
+	if(key === "Enter") game.toggleAnimation();
 });
 
 $('#start-game').on('click', (e) => {
@@ -348,14 +354,7 @@ $('#instructions-start-game').on('click', (e) => {
 });
 
 $('#pause-button').on('click', (e) => {
-	if (!stopped) {
-		stopped = true;
-		$('#pause-button').text('Unpause');
-	} else if (stopped) {
-		stopped = false;
-		animate();
-		$('#pause-button').text('Pause');
-	}
+	game.toggleAnimation();
 });
 
 $('#end-button').on('click', (e) => {
