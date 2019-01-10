@@ -1,4 +1,4 @@
-// LEVEL 1 SCRIPT
+// JS LEVEL 1 SCRIPT
 
 // grab canvas
 const level1Canvas = document.getElementById('level1-canvas');
