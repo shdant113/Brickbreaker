@@ -12,7 +12,7 @@ html, body {
 	height: 100%;
 }
 
-#start-screen, #level1, #game-over, #you-win {
+#start-screen, #level1, #game-over, #you-win, #instructions {
 	background-image: url('https://puu.sh/CuegE/23beb1e1e8.png');
 	background-position: center;
 	background-size: cover;
@@ -22,7 +22,7 @@ html, body {
 	margin: auto;
 }
 
-h1, h2 {
+h1, #credit, #instructions-text {
 	color: white;
 	text-align: center;
 }
@@ -37,10 +37,20 @@ h1 {
 	-webkit-text-stroke-color: navy;
 }
 
-h2 {
+#instructions-div {
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 30px;
+	margin: 40px 0;
+}
+
+#instructions-text, #credit {
 	margin: 30px 0;
 	font-family: 'Caveat Brush', cursive;
 	font-size: 40px;
+	text-shadow: black 0px 0px 5px;
+	-webkit-text-fill-color: white; /* Will override color (regardless of order) */
+	-webkit-text-stroke-width: 1px;
+	-webkit-text-stroke-color: black;
 }
 
 #scoreboard {
