@@ -1,0 +1,61 @@
+<!-- HTML -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="Brickbreaker/css/style.css">
+	<link href="https://fonts.googleapis.com/css?family=Caveat+Brush|Coiny|Montserrat+Alternates" rel="stylesheet">
+</head>
+<body>
+	<div id="start-screen">
+		<h1>Brick Breaker</h1>
+		<h2 id="credit">Game adapted by Spencer Dant</h2>
+		<button id="start-game" class="start">Start Game!</button>
+		<br>
+		<button id="instructions-button" class="start">Instructions</button>
+	</div>
+	<div id="level1">
+		<div id="scoreboard">
+			<span id="lives-text">Lives: 3</span>
+			<button id="pause-button">Pause</button>
+			<button id="end-button">End Game</button>
+			<span id="level-text">Level: 1</span>
+		</div>
+		<canvas id="level1-canvas" height="700" width="900"></canvas>
+	</div>
+	<!-- <div id="lost-a-life">
+		<h1>You Lost a Life!</h1>
+		<h2>The game will restart in: 5 seconds.</h2>
+	</div> -->
+	<div id="game-over">
+		<h1 id="game-over-text">Game Over!</h1>
+		<!-- <button class="play-again">Play Again</button> -->
+	</div>
+
+	<div id="instructions">
+		<div id="instructions-div">
+			<h2 id="instructions-text">
+				The object of this game is to brick all the bricks with the ball. You can try to steer the ball to break many bricks at a time or just go for each one. Either way, once you break them all, you win! 
+				<br>
+				<br>
+				Use the left and right arrow keys to control the paddle, or use the a key to steer the paddle to the left and the d key to steer the paddle to the right.
+				<br>
+				<br>
+				To pause the game, press the pause button or press enter.
+			</h2>
+		</div>
+		<button id="instructions-start-game" class="start">Start Game!</button>	
+	</div>
+	<div id="you-win">
+		<h1>You Win!</h1>
+		<!-- <button class="play-again">Play Again</button> -->
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.2/velocity.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.2/velocity.ui.js"></script>
+	<script type="text/javascript" src="Brickbreaker/js/org.js"></script>
+	<script type="text/javascript" src="Brickbreaker/js/app.js"></script>
+</body>
+</html>
